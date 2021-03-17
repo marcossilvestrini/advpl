@@ -21,9 +21,14 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 ## References
 
+[TDS VSCode](https://github.com/totvs/tds-vscode)
+[TDS: Compilação](https://github.com/totvs/tds-vscode/blob/master/docs/compilation.md)
+[Fontes Curso ADVPL para Leigos](https://drive.google.com/drive/u/0/folders/0B2bXz0zOen_gVHpEUGQtMXczclU)
 [Lista de Tabelas](https://terminaldeinformacao.com/wp-content/tabelas/sa1.php)
+[Limite Tamanho de Nomes de Funções](https://tdn.totvs.com/pages/viewpage.action?pageId=172296510)
+[Estruturas de Repetição](https://tdn.totvs.com/pages/viewpage.action?pageId=6063082)
 
-## List of Tables SX
+## Lista de Tabelas SX
 
 SX1 PERGUNTAS E RESPOSTAS\
 SX2 MAPEAMENTO DE ARQUIVOS\
@@ -48,10 +53,6 @@ SINDEX INDICE DOS ARQUIVOS 2\
 SXM CONTROLE DE SCHEDULE PROCESSOS ESPECIAIS\
 SXV MASHUP
 
-## TDS for VSCode
-
-[TDS: Compilação](https://github.com/totvs/tds-vscode/blob/master/docs/compilation.md)
-
 ## Nomes de Tabelas Customizadas
 
 - SZX
@@ -67,13 +68,9 @@ Exemplos: SZ1,SZA,ZA1,
 Em Opções, Inic. Padrão, adicionar:\
 GETSXENUM("ZZB","ZZB_COD")
 
-## Tabelas que entram no Backup
+## Backup de Dicionario no Banco
 
 SX2
 SX3
 SXB
 SIX
-
-## Fontes Curso ADVPL para Leigos
-
-https://drive.google.com/drive/u/0/folders/0B2bXz0zOen_gVHpEUGQtMXczclU

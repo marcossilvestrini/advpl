@@ -19,7 +19,7 @@ Static cMensagem:=""
 //----------------------------------- Static Functions---------------------------------
 
 // If Else
-Static Function IfElse()
+Static Function Example1()
     Local nValue1:=22
     Local nValue2:=30
     Local nValue3:=60
@@ -38,7 +38,8 @@ Static Function IfElse()
 
 return
 
-Static Function DoCase()
+// Do Case
+Static Function Example2()
     Local cConsole:="Switch"
 
 Do Case
@@ -56,6 +57,33 @@ Do Case
 
 EndCase
 
+return
+
+// For
+Static Function Example3()
+
+    Local nCount
+    Local nValue1 := 0
+
+    For nCount := 0 To 10
+        nValue1 += nCount
+    Next
+    cMensagem+= "[Value of nValue ]" + "= " + cValToChar(nValue1) + CRLF
+
+return
+
+// For with Step
+Static Function Example4()
+    Local nCount
+    For nCount:=0 To 20 Step 2
+        cMensagem+= "[Value of nCount with Step ]" + "= " + cValToChar(nCount) + CRLF
+    Next
+
+
+return
+
+
+
 // ToString Function
 Static Function ToString()
 return MsgInfo(cMensagem,"Structures")
@@ -64,11 +92,15 @@ return MsgInfo(cMensagem,"Structures")
 //------------------------------------Execution----------------------------------------
 User Function Structures()
 
-    // IfElse()
+    // Example1()
 
-    DoCase()
+   // Examples2()
+
+   // Example3()
+
+   Example4()
 
     // Print
-    ToString()
+   ToString()
 
 return
