@@ -2,7 +2,7 @@
 #include "parmtype.ch"
 #DEFINE CRLF Chr(13)+Chr(10)
 //------------------------------------------------------------------------------------
-/*{Protheus.doc}hello-world
+/*{Protheus.doc}operators
 Math Operators in ADVPL
 
 @author Marcos Silvestrini

@@ -2,7 +2,7 @@
 #INCLUDE "topconn.ch"
 
 //------------------------------------------------------------------------------------
-/*{Protheus.doc}ADV001
+/*{Protheus.doc}axCadastros
 Rotina para montagem de tela de tecnico do Axcadastros
 
 @author Marcos Silvestrini

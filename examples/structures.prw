@@ -2,7 +2,7 @@
 #include "parmtype.ch"
 #DEFINE CRLF Chr(13)+Chr(10)
 //------------------------------------------------------------------------------------
-/*{Protheus.doc}hello-world
+/*{Protheus.doc}structures
 Structures Decision and Repetition in ADVPL
 
 @author Marcos Silvestrini
@@ -82,7 +82,19 @@ Static Function Example4()
 
 return
 
+// While
 
+Static Function Example5()
+
+    Local nValue1:=0
+    Local nValue2:= 10
+
+    While nValue1 < nValue2
+        nValue1++
+    EndDo
+    cMensagem+= "[Value of nValue1 ]" + "= " + cValToChar(nValue1) + CRLF
+
+return
 
 // ToString Function
 Static Function ToString()
@@ -98,7 +110,9 @@ User Function Structures()
 
    // Example3()
 
-   Example4()
+   // Example4()
+
+   Example5()
 
     // Print
    ToString()

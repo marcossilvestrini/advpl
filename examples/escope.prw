@@ -2,7 +2,7 @@
 #include "parmtype.ch"
 
 //------------------------------------------------------------------------------------
-/*{Protheus.doc}hello-world
+/*{Protheus.doc}escope
 Escope Variables in ADVPL
 https://tdn.totvs.com/pages/viewpage.action?pageId=6063097
 
