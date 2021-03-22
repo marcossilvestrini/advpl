@@ -64,25 +64,23 @@ Static Function Example5()
     Local aValues1:={10,20,30,-40,-50}
     Local aValues2:=AClone(aValues1)
 
-    // // Compare Clone Arrays
+    // Compare Clone Arrays
     cMensagem+="VALUES OF ARRAY 1: "
     For nCount:=1 To Len(aValues1)
         cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
+        If nCount < Len(aValues1)
+            cMensagem+="-"
+        EndIf
     Next
-    If nCount < Len(aValues1)
-        cMensagem+="-"
-    EndIf
-
     cMensagem+= CRLF
 
     cMensagem+="VALUES OF ARRAY 2: "
     For nCount:=1 To Len(aValues2)
         cMensagem+="["+cValToChar(aValues2[nCount])+ "]"
+        If nCount < Len(aValues2)
+            cMensagem+="-"
+        EndIf
     Next
-    If nCount < Len(aValues2)
-        cMensagem+="-"
-    EndIf
-
 return
 
 // Example 6 - Function ADEL
@@ -93,12 +91,13 @@ Static Function Example6()
     cMensagem+="VALUES OF ARRAY: "
     For nCount:=1 To Len(aValues1)
         cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
+        If nCount < Len(aValues1)
+            cMensagem+="-"
+        EndIf
     Next
-    If nCount < Len(aValues1)
-        cMensagem+="-"
-    EndIf
     cMensagem+= CRLF
 
+    // Dell Value
     ADel(aValues1,2)
 
     cMensagem+="VALUES OF ARRAY: "
@@ -107,15 +106,69 @@ Static Function Example6()
             AIns(aValues1,nCount)
             aValues1[nCount]:="This Values has delete!!!"
             cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
-
         else
             cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
         EndIf
+        If nCount < Len(aValues1)
+            cMensagem+="-"
+        EndIf
     Next
-    If nCount < Len(aValues1)
-        cMensagem+="-"
-    EndIf
 
+return
+
+
+// Example 7 - Function ASIZE
+
+Static Function Example7()
+    Local aValues1:={"Steam","Epic","XBox","PS Store","GOG"}
+    //Local aValues1:={10.1,20,-10,9999}
+    cMensagem+="VALUES OF ARRAY: "
+    For nCount:=1 To Len(aValues1)
+        cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
+            If nCount < Len(aValues1)
+                cMensagem+="-"
+            EndIf
+    Next
+    cMensagem+= CRLF
+
+    // Del value
+    ASize(aValues1,2)
+
+    cMensagem+="VALUES OF ARRAY: "
+    For nCount:=1 To Len(aValues1)
+        cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
+        If nCount < Len(aValues1)
+            cMensagem+="-"
+        EndIf
+    Next
+return
+
+Static Function Example8()
+    Local aValues1:={10,45,50,"Carlos"}
+    Local aValues2:={}
+    Local nCount
+
+    cMensagem+="VALUES OF ARRAY 1: "
+    For nCount:=1 To Len(aValues1)
+        cMensagem+="["+cValToChar(aValues1[nCount])+ "]"
+        If nCount < Len(aValues1)
+            cMensagem+="-"
+        EndIf
+    Next
+
+    cMensagem+= CRLF
+
+    // ACopy(aOrigem,aDestino,/*nInicio*/,/*nCont*/,/*nPosDestino*/)
+    ASize(aValues2,4)
+    ACopy(aValues1,aValues2)
+
+    cMensagem+="VALUES OF ARRAY 2: "
+    For nCount:=1 To Len(aValues2)
+        cMensagem+="["+cValToChar(aValues2[nCount])+ "]"
+        If nCount < Len(aValues1)
+            cMensagem+="-"
+        EndIf
+    Next
 return
 
 // ToString Function
@@ -135,8 +188,14 @@ User Function Arrays()
 
     // Example5()
 
-    Example6()
+    //Example6()
+
+    // Example7()
+
+    Example8()
 
     ToString()
 
 return
+
+
