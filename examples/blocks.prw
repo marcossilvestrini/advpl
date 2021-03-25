@@ -24,14 +24,14 @@ return
 
 Static Function Example2()
     Local nvalue1:=10, nvalue2:=50
-    Local bBlock:={|nvalue1,nvalue2|Sum(nvalue1,nvalue2)}
+    Local bBlock:={|nvalue1,nvalue2|Sum(nvalue1,nvalue2)} // Not recommended user static functions in code block!!!
     cMensagem+="Code Block with functions and params" + CRLF
     cMensagem+="Function Sum(" + cValToChar(nvalue1) +"," + cValToChar(nvalue2) + ")" + CRLF
     cMensagem+="Result: " + cValToChar(Eval(bBlock,nvalue1,nvalue2)) + CRLF
 return
 
 Static Function Example3(nvalue1,nvalue2)
-    Local bBlock:={|nvalue1,nvalue2|Sum(nvalue1,nvalue2)}
+    Local bBlock:={|nvalue1,nvalue2|Sum(nvalue1,nvalue2)} // Not recommended user static functions in code block!!!
     cMensagem+="Code Block with functions and params" + CRLF
     cMensagem+="Function Sum(" + cValToChar(nvalue1) +"," + cValToChar(nvalue2) + ")" + CRLF
     cMensagem+="Result: " + cValToChar(Eval(bBlock,nvalue1,nvalue2)) + CRLF
