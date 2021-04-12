@@ -74,3 +74,7 @@ SX2
 SX3
 SXB
 SIX
+
+## Como Executar Programas Customizados(Antigo Formulas)
+
+Executar programa pelo SIGAGFE em:  Miscelanea -> Executar Programas(Ambiente 78)

@@ -2,8 +2,19 @@
 #include "parmtype.ch"
 #DEFINE CRLF Chr(13)+Chr(10)
 
+//------------------------------------------------------------------------------------
+/*{Protheus.doc}guess
+Game Guess in ADVPL
+
+@author Marcos Silvestrini
+@version P12
+@since
+*/
+//-------------------------------------------------------------------------------------
+
+
 //--------------------------------- Global Variables-----------------------------------
-Static cMensagem:="<b>"
+Static cMensagem:=""
 Static nNum:= Randomize(1,10)
 Static nKick:= 0
 Static nAttempts:=0
@@ -34,7 +45,6 @@ return
 
 // ToString Function
 Static Function ToString()
-Static cMensagem:="</b>"
 return MsgInfo(cMensagem,"Game Guess")
 
 
