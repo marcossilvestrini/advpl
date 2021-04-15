@@ -101,6 +101,37 @@ Static Function Example3()
 
 return
 
+Static Function Example4()
+    Local aArea:= SB1->(GetArea())
+    DBSelectArea("SB1")
+    SB1->(DBSetOrder(1))
+    SB1->(DBGoTop())
+    cMensagem+="Alter Record in Table SB1" + CRLF
+
+    // After Transaction
+    Example3()
+
+    // Begin TRansaction
+    Begin Transaction
+        cMensagem+="Started Transaction in SB1" + CRLF
+        If SB1->(DBSeek(FWXFilial("SB1") + "2"))
+            // Lock record for alter : .F. | Lock record for insert : .T.
+            RecLock("SB1",.F.)
+            // Replace Value
+            Replace B1_DESC With "XBOX ONE X SERIES"
+            // Unlock record
+            SB1->(MSUnlock())
+        EndIf
+    End Transaction
+    cMensagem+="End Transaction in SB1" + CRLF
+    RestArea(aArea)
+
+    // Last Alter
+    Example3()
+
+return
+
+
 // ToString Function
 Static Function ToString()
 return MsgInfo(cMensagem,"Manipulate Database in ADVPL")
@@ -115,7 +146,10 @@ User Function DBExamples()
     // Example2()
 
     // Example 3 - Function TCQuery
-    Example3()
+    // Example3()
+
+    // Example 4 - Alter record
+    Example4()
 
     ToString()
 
