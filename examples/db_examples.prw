@@ -1,5 +1,6 @@
 #include 'protheus.ch'
 #include "parmtype.ch"
+#include "TopConn.ch"
 #DEFINE CRLF Chr(13)+Chr(10)
 
 //------------------------------------------------------------------------------------
@@ -15,12 +16,11 @@ Manipulate Database in ADVPL
 
 //--------------------------------- Global Variables-----------------------------------
 Static cMensagem:=""
-Static aArea
-
 
 //----------------------------------- Static Functions---------------------------------
 
 Static Function Example1()
+    Local aArea:={}
     cMensagem+="Example 1: Access Table SB1" + CRLF
 
     // Save the active environment
@@ -46,8 +46,8 @@ Static Function Example1()
 
 return
 
-
 Static Function Example2()
+    Local aArea:={}
     cMensagem+="Example 2: Access Table SB1 with Function Posicione" + CRLF
 
     aArea:= SB1->(GetArea())
@@ -62,9 +62,44 @@ Static Function Example2()
         FWXFilial("SB1")+"2", ;
         "B1_DESC" ;
     )
+    RestArea(aArea)
 return
 
+Static Function Example3()
+    Local aArea:= SB1->(GetArea())
+    Local cQuery:=""
+    Local aDados:={}
+    cMensagem+="Example 3: Execute SQL Query With TCQuery" + CRLF
 
+    // Query SQL
+    cQuery:="SELECT B1_COD AS CODIGO, B1_DESC AS DESCRICAO "
+    cQuery+=" FROM " + " " + RetSQLName("SB1")
+
+    // Execute Query with TCQuery
+    TCQuery cQuery New Alias "TMP"
+
+    While ! TMP->(Eof())
+        //AAdd(aDest,xExpr)
+        AAdd(aDados,{TMP->CODIGO,TMP->DESCRICAO})
+        TMP->(DBSkip())
+    End
+
+    // Number of records
+    cMensagem+="NUMBER OF RECORDS IN TABLE: "+ cValToChar(Len(aDados)) +CRLF
+
+    // Records
+    For nCount:=1 To Len(aDados)
+        cMensagem+="CODIGO: " + aDados[nCount][1] +CRLF
+        cMensagem+="DESCRIÇÃO: " + aDados[nCount][2] +CRLF
+    Next nCount
+
+    // Close TMP Table
+    TMP->(DBCloseArea())
+
+    // Restores an environment previously saved by function GETAREA(). - Close Table
+    RestArea(aArea)
+
+return
 
 // ToString Function
 Static Function ToString()
@@ -77,7 +112,10 @@ User Function DBExamples()
     // Example1()
 
     // Example 2 - Function Posicione
-    Example2()
+    // Example2()
+
+    // Example 3 - Function TCQuery
+    Example3()
 
     ToString()
 
