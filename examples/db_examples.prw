@@ -106,7 +106,7 @@ Static Function Example4()
     DBSelectArea("SB1")
     SB1->(DBSetOrder(1))
     SB1->(DBGoTop())
-    cMensagem+="Alter Record in Table SB1" + CRLF
+    cMensagem+="Example 4: Alter Record in Table SB1" + CRLF
 
     // After Transaction
     Example3()
@@ -122,13 +122,58 @@ Static Function Example4()
             // Unlock record
             SB1->(MSUnlock())
         EndIf
+        // Rollback
+        //DisarmTransaction()
+        //Break
     End Transaction
+
     cMensagem+="End Transaction in SB1" + CRLF
     RestArea(aArea)
 
     // Last Alter
     Example3()
 
+return
+
+Static Function Example5()
+    Local aArea:=GetArea()
+    Local aDados:={}
+    Private LMSErroAuto:= .F.
+
+    cMensagem+="Example 5: Insert Record in Table SB1 with MSExecAuto" + CRLF
+    // Insert data in array
+    aDados:={;
+        {"B1_COD" , "3" ,Nil},;
+        {"B1_DESC" ,"AMD RADEON RX 580" ,Nil},;
+        {"B1_TIPO" ,"AI" ,Nil},;
+        {"B1_UM" ,"UN" ,Nil},;
+        {"B1_LOCPAD" ,"1" ,Nil},;
+        {"B1_PICM" ,0,Nil},;
+        {"B1_IPI" ,0,Nil},;
+        {"B1_CONTRAT" ,"N" ,Nil},;
+        {"B1_LOCALIZ" ,"N" ,Nil};
+    }
+
+    // Begin Transaction
+    cMensagem+="Begin Transaction" + CRLF
+    Begin Transaction
+        // Insert data with MSExecAuto
+        MSExecAuto({|x,y|Mata010(x,y)},aDados,3)
+        cMensagem+="Validate Transaction" + CRLF
+        // Check Errors - If error, does rollback
+        If LMSErroAuto
+            Alert("Error in insert data in SB1")
+            cMensagem+="Transaction Failed!!!" + CRLF
+            MostraErro()
+            DisarmTransaction()
+        Else
+            Alert("Successfuly insert data in SB1")
+            cMensagem+="Transaction Successfully!!!" + CRLF
+        EndIf
+    End Transaction
+    // End Transaction
+
+    RestArea(aArea)
 return
 
 
@@ -148,8 +193,11 @@ User Function DBExamples()
     // Example 3 - Function TCQuery
     // Example3()
 
-    // Example 4 - Alter record
-    Example4()
+    // Example 4 - Update record
+    // Example4()
+
+    // Example 5 - Insert REcord with MSExcAuto()
+    Example5()
 
     ToString()
 
