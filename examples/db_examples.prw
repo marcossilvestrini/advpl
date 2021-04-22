@@ -191,13 +191,13 @@ User Function DBExamples()
     // Example2()
 
     // Example 3 - Function TCQuery
-    // Example3()
+    Example3()
 
     // Example 4 - Update record
     // Example4()
 
     // Example 5 - Insert REcord with MSExcAuto()
-    Example5()
+    //Example5()
 
     ToString()
 

@@ -5,7 +5,7 @@
 
 //------------------------------------------------------------------------------------
 /*{Protheus.doc}models
-Manipulate Database in ADVPL
+Example Function AxCadastro
 
 @author Marcos Silvestrini
 @version P12
