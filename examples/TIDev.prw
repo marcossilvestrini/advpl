@@ -1,5 +1,15 @@
 #Include 'Protheus.ch'
 
+//------------------------------------------------------------------------------------
+/*{Protheus.doc}TIDev
+Function for test user functions
+
+@author DEVS TI TOTVS
+@version P12
+@since
+*/
+//-------------------------------------------------------------------------------------
+
 Static __nHeight   := NIL
 Static __nWidth    := NIL
 Static __cSeqTmp   := "000"
@@ -21,24 +31,24 @@ Static __cErroA	   := ""
 Static __cMaskArq  := "*.*"
 Static __cErroP    := ""
 Static __cListaEmp := ""
-Static oTimer 
+Static oTimer
 
 User Function TIDev()
-            
+
     If Type("OMAINWND") != "O"
         SetKey(K_ALT_S, {|| U_TIDev() })
         TIDevMan()
-    Else 
+    Else
         TIDevChild()
-    EndIf 
+    EndIf
 
-Return 
+Return
 
 Static Function TIDevMan()
     Local cEmp     := ""
     Local cFil     := ""
     Local lRet     := .F.
-    Local oMsgBar  
+    Local oMsgBar
     Local oMsgIt
     Local oMsgIt2
     Private oMsgIt3
@@ -78,32 +88,32 @@ Static Function TIDevMan()
     lmshelpauto := .F.
     PTInternal(1, "### TOTVS TI DEVELOPER ###" )
 
-    
+
     DEFINE WINDOW oMainWnd FROM 0,0 TO 0,0 TITLE "TIDev - Ferramenta de desenvolvimento"
         oMainWnd:oFont := oFont
         oMainWnd:SetColor(CLR_BLACK,CLR_WHITE)
         oMainWnd:nClrText := 0
-        
-              
-        Tela(oMainWnd) 
+
+
+        Tela(oMainWnd)
 
         DEFINE MESSAGE BAR oMsgBar OF oMainWnd PROMPT "TIDev " COLOR RGB(116,116,116) FONT oFont
         DEFINE MSGITEM oMsgIt of oMsgBar PROMPT "Empresa: " + cEmpAnt + " Filial: " + cFilAnt  SIZE 100  ACTION InitEmp(oMsgIt)
         DEFINE MSGITEM oMsgIt2 of oMsgBar PROMPT GetEnvServer() SIZE 100
         DEFINE MSGITEM oMsgIt3 of oMsgBar PROMPT "Dele On" SIZE 100
 
-    ACTIVATE WINDOW oMainWnd MAXIMIZED 
+    ACTIVATE WINDOW oMainWnd MAXIMIZED
     RpcClearEnv()
 
-Return 
+Return
 
 Static Function TIDevChild()
-    Local oDlg 
-    
+    Local oDlg
+
     If __nHeight == NIL
         __nHeight := oMainWnd:nHeight - 100
         __nWidth  := oMainWnd:nWidth - 20
-    EndIf 
+    EndIf
 
     DEFINE MSDIALOG oDlg FROM 0,0 TO oMainWnd:nHeight - 100, oMainWnd:nWidth  - 20  Pixel TITLE  "TIDev - Ferramenta de desenvolvimento"
         oDlg:lEscClose := .F.
@@ -114,24 +124,24 @@ Static Function TIDevChild()
 
     Set(11,"on")
 
-Return  
+Return
 
 Static Function Tela(oDlg)
     Local aFolder  := {'Query','Tabelas', 'RPO', 'Linha de Comando','Html', 'Arquivos',"Monitor","Serviço","Erro",'Conversor Base64', "Grupo" }
-    Local oFol 
-    
+    Local oFol
+
     Local aFolQry  := {"Query #1", "Query #2", "Query #3", "Query #4", "Query #5"}
-    Local oFolQry 
+    Local oFolQry
 
     Local aFolDic  := {"Tabela #1", "Tabela #2", "Tabela #3", "Tabela #4", "Tabela #5"}
     Local oFolDic
 
     Local nSF
     Local oP0
-    
+
 
     GetEmps() // atualiza a variavel static __cListaEmp
-    
+
     oP0:= TPanelCss():New(,,, oDlg)
     oP0:SetCoors(TRect():New(0, 0, 10, 10))
     oP0:Align :=CONTROL_ALIGN_ALLCLIENT
@@ -139,19 +149,19 @@ Static Function Tela(oDlg)
     oFol := TFolder():New(, , aFolder, aFolder, oP0, , , , .T., .F.)
     oFol:Align := CONTROL_ALIGN_ALLCLIENT
     oFol:bSetOption:= {|n| SetFolder(n), .T.}
-    
+
     //--Folder Query
     oFolQry := TFolder():New(, , aFolQry, aFolQry, oFol:aDialogs[1], , , , .T., .F.)
     oFolQry:Align := CONTROL_ALIGN_ALLCLIENT
-    For nSF := 1 to 5 
+    For nSF := 1 to 5
         FolderQry(oFolQry:aDialogs[nSF], nSF)
     Next
 
     //--Folder Dicionario
     oFolDic := TFolder():New(, , aFolDic, aFolDic, oFol:aDialogs[2], , , , .T., .F.)
     oFolDic:Align := CONTROL_ALIGN_ALLCLIENT
-  
-    For nSF := 1 to 5 
+
+    For nSF := 1 to 5
         FolderDic(oFolDic:aDialogs[nSF], nSF)
     Next
 
@@ -167,7 +177,7 @@ Static Function Tela(oDlg)
 
     SetFolder(1)
 
-Return 
+Return
 
 Static Function SetFolder(nFolder)
 
@@ -195,7 +205,7 @@ Static Function GetEmps()
 
     SM0->(DbGoto(nRecno))
 
-Return 
+Return
 
 Static Function SelEmp(cEmp, cFil)
     Local oDlgLogin
@@ -214,7 +224,7 @@ Static Function SelEmp(cEmp, cFil)
         __nHeight := oSelWnd:nHeight - 100
         __nWidth  := oSelWnd:nWidth - 30
 
-    EndIf 
+    EndIf
 
     SM0->(DbGotop())
     While ! SM0->(Eof())
@@ -246,22 +256,22 @@ Static Function SelEmp(cEmp, cFil)
             MsgAlert("Não foi possível montar o ambiente selecionado. " )
             Return .F.
         EndIf
-    EndIf 
+    EndIf
 
 Return lOk
 
 
 Static Function InitEmp(oTMsgItem)
-    Local cAliasExqr 
+    Local cAliasExqr
     Local cAliasTst
-    Local np  
+    Local np
     Local cEmpNew := ""
     Local cFilNew := ""
-        
 
-    If ! MsgYesNo("Confirma a mudança de Empresa e/ou Filial?") 
-        Return  
-    EndIf 
+
+    If ! MsgYesNo("Confirma a mudança de Empresa e/ou Filial?")
+        Return
+    EndIf
 
     For np:= 1 to 5
         cAliasExqr := __aAliasExp[np]
@@ -272,7 +282,7 @@ Static Function InitEmp(oTMsgItem)
             __aQryBrw[np]:Hide()
             __aQryBrw[np]:FreeChildren()
             FreeObj(__aQryBrw[np])
-            __aQryBrw[np]:= NIL 
+            __aQryBrw[np]:= NIL
         EndIf
         If Select(cAliasExqr) > 0
             (cAliasExqr)->(DbCloseArea())
@@ -287,13 +297,13 @@ Static Function InitEmp(oTMsgItem)
             __aDicBrw[np]:Hide()
             __aDicBrw[np]:FreeChildren()
             FreeObj(__aDicBrw[np])
-            __aDicBrw[np]:= NIL 
+            __aDicBrw[np]:= NIL
         EndIf
         If Select(cAliasTst) > 0
             (cAliasTst)->(DbCloseArea())
         EndIf
-    Next 
-    
+    Next
+
 
     If !SelEmp(@cEmpNew, @cFilNew)
         Return .F.
@@ -326,15 +336,15 @@ Static Function FolderQry(oDlg, np)
     Local oBPS6
     Local oBPS7
     Local oBPS8
-    
+
     Local oPSL
     Local oPSLB
     Local oMemoL
     Local cMemoL := ""
     Local oPSR
-    Local oPSRB 
+    Local oPSRB
     Local oMemoR
-    Local cMemoR := ""    
+    Local cMemoR := ""
     Local oSV
 
     Local oPI
@@ -345,10 +355,10 @@ Static Function FolderQry(oDlg, np)
     Local oBPI4
     Local oPIL
     Local oPIM
-    
+
     Local oMsg
     Local cMsg := ""
-    
+
     Local oSH
     Local oFont  := TFont():New("Consolas",, 20,, .F.,,,,, .F., .F.)
     Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
@@ -360,7 +370,7 @@ Static Function FolderQry(oDlg, np)
     oPS:= TPanelCss():New(,,, oDlg)
     oPS:SetCoors(TRect():New(0, 0, __nHeight * 0.4, __nWidth))
     oPS:Align :=CONTROL_ALIGN_ALLCLIENT
-    
+
         oPSL:= TPanelCss():New(,,, oPS)
         oPSL:SetCoors(TRect():New(0, 0, __nHeight * 0.4, __nWidth * 0.5 ))
         oPSL:Align :=CONTROL_ALIGN_ALLCLIENT
@@ -368,14 +378,14 @@ Static Function FolderQry(oDlg, np)
             oPSLB:SetCoors(TRect():New(0, 0, 30, __nWidth))
             oPSLB:Align :=CONTROL_ALIGN_TOP
 
-                oBPS1  := THButton():New(002, 002, "Executar"   , oPSLB, {|| QryRun(cMemoL, oPIL, np, oMsg)   }, 50, 10, oFontB, "Executa as linhas com macro") 
-                oBPS2  := THButton():New(002, 052, "Abrir"      , oPSLB, {|| FileLoad(@cMemoL)                }, 40, 10, oFontB, "Abrir arquivo sql") 
-                oBPS3  := THButton():New(002, 092, "Salvar"     , oPSLB, {|| FileSave(cMemoL)                 }, 40, 10, oFontB, "Salvar arquivo sql") 
-                oBPS4  := THButton():New(002, 132, "ChangeQuery", oPSLB, {|| cMemoL := ChangeQuery(cMemoL)    }, 60, 10, oFontB, "Aplicar Change Query") 
-                oBPS5  := THButton():New(002, 192, "SqlToAdvpl" , oPSLB, {|| cMemoR := Sql2Advpl(cMemoL, oPSR)}, 60, 10, oFontB, "Gerar código Advpl") 
-                oBPS6  := THButton():New(002, 252, "Format"     , oPSLB, {|| cMemoL := FormatSql(cMemoL)      }, 40, 10, oFontB, "Formatar Query") 
-                oBPS7  := THButton():New(002, 292, "Histórico"  , oPSLB, {|| MenuQuery(@cMemoL, oBPS7, np)    }, 50, 10, oFontB, "Lista com o histórico") 
-                
+                oBPS1  := THButton():New(002, 002, "Executar"   , oPSLB, {|| QryRun(cMemoL, oPIL, np, oMsg)   }, 50, 10, oFontB, "Executa as linhas com macro")
+                oBPS2  := THButton():New(002, 052, "Abrir"      , oPSLB, {|| FileLoad(@cMemoL)                }, 40, 10, oFontB, "Abrir arquivo sql")
+                oBPS3  := THButton():New(002, 092, "Salvar"     , oPSLB, {|| FileSave(cMemoL)                 }, 40, 10, oFontB, "Salvar arquivo sql")
+                oBPS4  := THButton():New(002, 132, "ChangeQuery", oPSLB, {|| cMemoL := ChangeQuery(cMemoL)    }, 60, 10, oFontB, "Aplicar Change Query")
+                oBPS5  := THButton():New(002, 192, "SqlToAdvpl" , oPSLB, {|| cMemoR := Sql2Advpl(cMemoL, oPSR)}, 60, 10, oFontB, "Gerar código Advpl")
+                oBPS6  := THButton():New(002, 252, "Format"     , oPSLB, {|| cMemoL := FormatSql(cMemoL)      }, 40, 10, oFontB, "Formatar Query")
+                oBPS7  := THButton():New(002, 292, "Histórico"  , oPSLB, {|| MenuQuery(@cMemoL, oBPS7, np)    }, 50, 10, oFontB, "Lista com o histórico")
+
             oMemoL := tMultiget():new(,, bSETGET(cMemoL), oPSL)
             oMemoL:Align := CONTROL_ALIGN_ALLCLIENT
             oMemoL:oFont:=oFont
@@ -388,9 +398,9 @@ Static Function FolderQry(oDlg, np)
             oPSRB:SetCoors(TRect():New(0, 0, 30, __nWidth))
             oPSRB:Align :=CONTROL_ALIGN_TOP
 
-                oBPS8  := THButton():New(002, 002, "AdvplToSql"      , oPSRB, {|| cMemoL := Advpl2Sql(@cMemoR)      }, 60, 10, oFontB, "Gera código Sql") 
-                oBPS9  := THButton():New(002, 062, "Embedded"        , oPSRB, {|| cMemoL := ToEmbedded(@cMemoR)  }, 80, 10, oFontB, "Converte Advpl (cQuery) para o formato Embedded") 
-                oBPS10 := THButton():New(002, 142, "cQuery"          , oPSRB, {|| cMemoL := TocQuery(@cMemoR)      }, 80, 10, oFontB, "Converte Embedded para o formato Advpl (cQuery)") 
+                oBPS8  := THButton():New(002, 002, "AdvplToSql"      , oPSRB, {|| cMemoL := Advpl2Sql(@cMemoR)      }, 60, 10, oFontB, "Gera código Sql")
+                oBPS9  := THButton():New(002, 062, "Embedded"        , oPSRB, {|| cMemoL := ToEmbedded(@cMemoR)  }, 80, 10, oFontB, "Converte Advpl (cQuery) para o formato Embedded")
+                oBPS10 := THButton():New(002, 142, "cQuery"          , oPSRB, {|| cMemoL := TocQuery(@cMemoR)      }, 80, 10, oFontB, "Converte Embedded para o formato Advpl (cQuery)")
 
             oMemoR := tMultiget():new(,, bSETGET(cMemoR), oPSR)
             oMemoR:Align := CONTROL_ALIGN_ALLCLIENT
@@ -411,10 +421,10 @@ Static Function FolderQry(oDlg, np)
         oPIB:= TPanelCss():New(,,, oPI)
         oPIB:SetCoors(TRect():New(0, 0, 30, __nWidth))
         oPIB:Align :=CONTROL_ALIGN_TOP
-            oBPI1  := THButton():New(002, 002,"CSV"    ,oPIB, {|| ExportCSV(nP, oMsg)      }, 40, 10, oFontB, "Salva query no formato CSV") 
-            oBPI2  := THButton():New(002, 042,"XML"    ,oPIB, {|| ExportXml(nP, oMsg)      }, 40, 10, oFontB, "Salva query utilizando FWMSEXCEL formato XML") 
-            oBPI3  := THButton():New(002, 082,"Excel"  ,oPIB, {|| ExportExcel(nP, oMsg)    }, 40, 10, oFontB, "Salva query utilizando TIExcel formato XLS (DBF4)") 
-            oBPI4  := THButton():New(002, 122,"Count"  ,oPIB, {|| CountQuery(cMemoL, oMsg) }, 40, 10, oFontB, "Retorna a quantidade de linhas da query") 
+            oBPI1  := THButton():New(002, 002,"CSV"    ,oPIB, {|| ExportCSV(nP, oMsg)      }, 40, 10, oFontB, "Salva query no formato CSV")
+            oBPI2  := THButton():New(002, 042,"XML"    ,oPIB, {|| ExportXml(nP, oMsg)      }, 40, 10, oFontB, "Salva query utilizando FWMSEXCEL formato XML")
+            oBPI3  := THButton():New(002, 082,"Excel"  ,oPIB, {|| ExportExcel(nP, oMsg)    }, 40, 10, oFontB, "Salva query utilizando TIExcel formato XLS (DBF4)")
+            oBPI4  := THButton():New(002, 122,"Count"  ,oPIB, {|| CountQuery(cMemoL, oMsg) }, 40, 10, oFontB, "Retorna a quantidade de linhas da query")
 
         oPIL:= TPanelCss():New(,,, oPI)
         oPIL:SetCoors(TRect():New(0, 0, 30, __nWidth))
@@ -432,7 +442,7 @@ Static Function FolderQry(oDlg, np)
     oSH:Align := CONTROL_ALIGN_BOTTOM
     oSH:nClrText :=0
 
-Return 
+Return
 
 
 Static Function FileSave(cMemoL)
@@ -582,14 +592,14 @@ Return cQry
 Static Function MenuQuery(cCMD, oOwner, np)
     Local nX := 0
     Local oMenu
-    
+
     Local cAux    := ''
     Local bBlock  :={||}
     Local cSufix  := ""
     default np := 1
 
     cSufix := "query" + Str(np, 1)
-    
+
     LeHst(__aHstQry[np], cSufix)
 
     oMenu := tMenu():new(0, 0, 0, 0, .T., , oOwner)
@@ -669,17 +679,17 @@ Return cA
 Static Function ToEmbedded(cQuery)
 
     MsgAlert("Em construção")
-Return 
+Return
 
 Static Function TocQuery(cQuery)
 
     MsgAlert("Em construção")
-Return 
+Return
 
 /*
 Static Function Embedded(cQuery)
     Local aQry := StrTokArr(QryTrim(cQuery), CRLF)
-    Local cRet 
+    Local cRet
     Local nX := 0
     Local xAux :=""
     Local cBrkLine:=""
@@ -691,15 +701,15 @@ Static Function Embedded(cQuery)
 
         For nX := 1 to Len(aQry)
             If empty(aQry[nX])
-                Loop 
-            EndIf 
+                Loop
+            EndIf
             aQry[nX]:= Alltrim(aQry[nX])
 
             If Right(aQry[nX], 1) == ';'
                 cBrkLine += SubStr(aQry[nX], 1, len(aQry[nX]) - 1)
                 loop
             EndIf
-            // trata RetSqlTable('SE2') => 
+            // trata RetSqlTable('SE2') =>
             Trata
 
             xAux := &(cBrkLine + aQry[nX])
@@ -723,10 +733,10 @@ Static Function Embedded(cQuery)
         __cErroA :=""
     EndIf
 
-    cQuery := cRet 
+    cQuery := cRet
     //cRet := FormatSql(cRet)
 
-Return 
+Return
 */
 
 Static Function QryRun(cMemoL, oPSR, np, oMsg)
@@ -768,12 +778,12 @@ Static Function PQryRun(cQuery, oPSR, np, oMsg)
     oMsg:SetText("")
     oMsg:Refresh()
     ProcessMessage()
-    
+
     If Empty(cQuery)
         oMsg:SetText("Query branco!!!")
-        Return 
-    EndIf 
-    
+        Return
+    EndIf
+
 
     cComando := Left(cQuery, At(" ",cQuery) -1)
 
@@ -788,7 +798,7 @@ Static Function PQryRun(cQuery, oPSR, np, oMsg)
         __aQryBrw[np]:Hide()
         __aQryBrw[np]:FreeChildren()
         FreeObj(__aQryBrw[np])
-        __aQryBrw[np]:= NIL 
+        __aQryBrw[np]:= NIL
     EndIf
 
     If Select(cAliasExqr) > 0
@@ -808,7 +818,7 @@ Static Function PQryRun(cQuery, oPSR, np, oMsg)
             If Right(cNoSelect,1) == ";"
                 cNoSelect := left(cNoSelect,Len(cNoSelect) - 1)
             EndIf
-            
+
             nSec1 := Seconds()
             aComando := StrTokArr(cNoSelect, ";")
             For nx:= 1 to len(aComando)
@@ -820,21 +830,21 @@ Static Function PQryRun(cQuery, oPSR, np, oMsg)
             TcSQLExec( "COMMIT" )
             nSec2 := Seconds()
 
-            If nSec2 >= nSec1 
+            If nSec2 >= nSec1
                 cMsgT :=  "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
-            EndIf 
+            EndIf
             oMsg:SetText(cMsgT +  " | Query Executada! | Quantidade de comandos processados: " + AllTrim(Str(len(aComando))))
             MsgAlert("Query executada!")
         Else
-         
+
             nSec1 := Seconds()
             dbUseArea(.T.,'TOPCONN', TCGenQry(,, cQuery), cAliasTst, .F., .T.)
             nSec2 := Seconds()
 
-          
-            If nSec2 >= nSec1 
+
+            If nSec2 >= nSec1
                 cMsgT :=  "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
-            EndIf 
+            EndIf
             oMsg:SetText(cMsgT)
 
             aStruct := (cAliasTst)->(dbStruct())
@@ -857,7 +867,7 @@ Static Function PQryRun(cQuery, oPSR, np, oMsg)
             dbUseArea( .T., "DBFCDX", cDir + cAliasExqr, cAliasExqr, .F., .F. )
 
             __aQryBrw[np] := MsBrGetDBase():New(1, 1, __DlgWidth(oPSR)-1, __DlgHeight(oPSR) - 1,,,, oPSR,,,,,,, oFont ,,, ,         , .F. , cAliasExqr, .T.,, .F.,,,)
-            
+
             For nX:=1 To (cAliasExqr)->(FCount())
                 cCampo := aStruct[nx, 1]
                 aTamSx3 := TamSX3(cCampo)
@@ -865,32 +875,32 @@ Static Function PQryRun(cQuery, oPSR, np, oMsg)
                     cTipo  := aTamSx3[3]
                     nTam   := aTamSx3[1]
                     nDec   := aTamSx3[2]
-                Else 
+                Else
                     cTipo  := aEstruAux[nx, 2]
                     nTam   := aEstruAux[nx, 3]
                     nDec   := aEstruAux[nx, 4]
-                EndIf 
+                EndIf
                 If cCampo == "R_E_C_N_O_" .OR. cCampo == "R_E_C_D_E_L_"
                     nDec := 0
-                EndIf 
+                EndIf
 
                 If cTipo == "N"
                     cPict  := ""
                     If nDec > 0
-                        cPict := Repl("9", nTam - nDec + 1)  + "." + Repl("9", nDec) 
+                        cPict := Repl("9", nTam - nDec + 1)  + "." + Repl("9", nDec)
                     Else
-                        cPict := Repl("9", nTam ) 
-                    EndIf 
+                        cPict := Repl("9", nTam )
+                    EndIf
                     __aQryBrw[np]:AddColumn( TCColumn():New( (cAliasTst)->(Field(nx)) , &("{ || " + cAliasExqr + "->" + (cAliasExqr)->(FieldName(nX)) + "}"), cPict,,,, "RIGHT"))
                 ElseIf cTipo == "L"
                     __aQryBrw[np]:AddColumn( TCColumn():New( aStruct[nx, 1], &("{ || " + cAliasExqr + "->" + (cAliasExqr)->(FieldName(nX)) + "}"), "@!",,,, "LEFT"))
-                ElseIf cTipo == "C"     
+                ElseIf cTipo == "C"
                     __aQryBrw[np]:AddColumn( TCColumn():New( aStruct[nx, 1], &("{ || " + cAliasExqr + "->" + (cAliasExqr)->(FieldName(nX)) + "}"), "@!",,,, "LEFT"))
                 ElseIf cTipo == "D"
                     __aQryBrw[np]:AddColumn( TCColumn():New( aStruct[nx, 1], &("{ || Stod(" + cAliasExqr + "->" + (cAliasExqr)->(FieldName(nX)) + ")}"), "@E",,,, "CENTER") )
                 ElseIf cTipo == "M"
                     __aQryBrw[np]:AddColumn( TCColumn():New( aStruct[nx, 1], { || "Memo" },,,,,.F.) )
-                EndIf 
+                EndIf
             Next nX
 
             Query2Tmp(cAliasTst, cAliasExqr)
@@ -963,7 +973,7 @@ Return
 Static Function AtuQry(oBrow)
     //oBrow:Refresh()
     oBrow:callRefresh()
-Return 
+Return
 
 Static Function ExportCSV(np, oMsg)
     Local cFile := ""
@@ -997,7 +1007,7 @@ Static Function ExportCSV(np, oMsg)
         EndIf
         FErase(cFile)
     EndIF
-    
+
     oMsg:SetText("")
     oMsg:Refresh()
     ProcessMessage()
@@ -1008,9 +1018,9 @@ Static Function ExportCSV(np, oMsg)
 
     nSec2 := Seconds()
 
-    If nSec2 >= nSec1 
+    If nSec2 >= nSec1
        cMsgT :=  "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
-    EndIf 
+    EndIf
 
     If lAbortPrint
         cMsg := "Geração interrompida, planilha csv com conteudo parcial!"
@@ -1019,7 +1029,7 @@ Static Function ExportCSV(np, oMsg)
     EndIf
     MsgAlert(cMsg)
     oMsg:SetText(cMsgT + " |Arquivo: " + cFile + " |" + cMsg )
-    
+
     ShellExecute("open", cFile, "", "C:\", 1)
 
 Return
@@ -1028,7 +1038,7 @@ Static Function ProcCSV(cAliasCSV, cArquivo)
     Local nRec := (cAliasCSV)->(Recno())
     Local nReg := 0
 
-    
+
     (cAliasCSV)->(GrvCabCSV(cArquivo))
 
     ProcRegua(1)
@@ -1059,15 +1069,15 @@ Static Function GrvCabCSV(cArquivo)
         cCab +=  aFields[nx, 1] + ";"
     Next
     GrvArq(cArquivo, cCab)
-Return 
+Return
 
 Static Function GrvLinCSV(cArquivo)
     Local aFields := dbStruct()
     Local nFields := Len(aFields)
-    Local cLinha  := "" 
+    Local cLinha  := ""
     Local nx      := 0
-    
-    Default cArquivo := __Export 
+
+    Default cArquivo := __Export
 
     cLinha := ""
     For nx:= 1 to nFields
@@ -1086,7 +1096,7 @@ Static Function GrvLinCSV(cArquivo)
     Next
     GrvArq(cArquivo, cLinha)
 
-Return  
+Return
 
 Static Function ExportXml(np, oMsg)
     Local cFile := ""
@@ -1125,9 +1135,9 @@ Static Function ExportXml(np, oMsg)
     nSec1 := Seconds()
 
     oExcel:= FWMSEXCEL():New()
-    
+
     Processa({|| oExcel := ProcXml(oExcel, cAliasTst)},,,.T.)
-    
+
     oExcel:Activate()
     oExcel:GetXMLFile(cFile)
     oExcel := FreeObj(oExcel)
@@ -1139,22 +1149,22 @@ Static Function ExportXml(np, oMsg)
     EndIf
 
     nSec2 := Seconds()
-    If nSec2 >= nSec1 
+    If nSec2 >= nSec1
        cMsgT :=  "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
-    EndIf 
+    EndIf
     MsgAlert(cMsg)
     oMsg:SetText(cMsgT + " |Arquivo: " + cFile + " |" + cMsg )
-    
+
     ShellExecute("open", cFile, "", "C:\", 1)
 
 Return
-    
+
 Static Function ProcXml(oExcel, cAliasCSV)
     Local nReg    := 0
     Local nRec    := (cAliasCSV)->(Recno())
 
     (cAliasCSV)->(CabXml(oExcel))
-   
+
     ProcRegua(1)
     (cAliasCSV)->(DbGoTop())
     While (cAliasCSV)->(! Eof())
@@ -1182,7 +1192,7 @@ Static Function CabXml(oExcel)
     Local nFormat := 0
     Local lTotal  := .F.
 
-    
+
     oExcel:AddworkSheet(cPlan)
     oExcel:AddTable (cPlan, cTit)
 
@@ -1203,7 +1213,7 @@ Static Function CabXml(oExcel)
         oExcel:AddColumn(cPlan, cTit, aFields[nX, 1], nAlign, nFormat, lTotal)
     Next
 
-Return 
+Return
 
 Static Function LinXml(oExcel)
     Local nx      := 0
@@ -1217,18 +1227,18 @@ Static Function LinXml(oExcel)
 
     aLinha:= {}
     For nx:= 1 to nFields
-        aadd(aLinha, FieldGet(nx)) 
+        aadd(aLinha, FieldGet(nx))
     Next
     oExcel:AddRow(cPlan, cTit, aLinha)
 
-Return 
+Return
 
 
 Static Function LinExel()
     Local nx      := 0
     Local aFields := dbStruct()
     Local nFields := Len(aFields)
-    Local oDBF    
+    Local oDBF
 
     oDBF:= __Export
     oDBF:Insert()
@@ -1237,15 +1247,15 @@ Static Function LinExel()
     Next
     oDBF:Update()
 
-Return 
+Return
 
 Static Function LinDB()
     Local nx      := 0
     Local aFields := dbStruct()
     Local nFields := Len(aFields)
     Local cAlias  := Alias()
-   
-   
+
+
     (__Export)->(RecLock(__Export, .T.))
     For nx:= 1 to nFields
         (__Export)->(FieldPut(nx, (cAlias)->(FieldGet(nx))))
@@ -1253,7 +1263,7 @@ Static Function LinDB()
     (__Export)->(DbUnlock())
     (__Export)->(dbCommit())
 
-Return 
+Return
 
 
 Static Function ExportExcel(np, oMsg)
@@ -1292,7 +1302,7 @@ Static Function ExportExcel(np, oMsg)
 
     nSec1 := Seconds()
 
-    Processa({|| cErro := GeraExcel(cAliasTst, cFile) },,, .T.) 
+    Processa({|| cErro := GeraExcel(cAliasTst, cFile) },,, .T.)
 
     If lAbortPrint
         cMsg := "Geração interrompida, planilha Excel com conteudo parcial!"
@@ -1301,12 +1311,12 @@ Static Function ExportExcel(np, oMsg)
     EndIf
     If ! Empty(cErro)
         cMsg := cErro
-    EndIf 
+    EndIf
 
     nSec2 := Seconds()
-    If nSec2 >= nSec1 
+    If nSec2 >= nSec1
        cMsgT :=  "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
-    EndIf 
+    EndIf
     MsgAlert(cMsg)
     oMsg:SetText(cMsgT + " |Arquivo: " + cFile + " |" + cMsg )
 
@@ -1324,21 +1334,21 @@ Static Function GeraExcel(cAlias, cArqXLS)
     Local cTmpDbf := "\TIDBF\"
     Local cErro   := ""
 
-    nP := Rat("\", cArqXlS) 
+    nP := Rat("\", cArqXlS)
     If nP > 0
         cDirXls := Left(cArqXlS, nP)
         cNomXls := Subs(cArqXlS, nP + 1)
-    EndIf 
+    EndIf
     // Trata os caminho e nome de arquivo no Server
     If ! ExistDir(cTmpDbf)
         MakeDir(cTmpDbf)
-    EndIf 
+    EndIf
     cNomTmp := "TMP" + FWTimeStamp() + ".xls"
 
     cFile  := cTmpDbf + cNomTmp
     If File(cFile)
         FErase(cFile)
-    EndIf 
+    EndIf
     ProcRegua(1)
     IncProc("Gerando arquivo Excel no servidor...")
     ProcessMessage()
@@ -1355,8 +1365,8 @@ Static Function GeraExcel(cAlias, cArqXLS)
         Ferase(cFile)
     EndIf
     If FRename(cDirXls + cNomTmp,  cDirXls + cNomXlS) = -1
-        cErro := "Não foi possivel renomear o arquivo " + cDirXls + cNomTmp 
-    EndIf 
+        cErro := "Não foi possivel renomear o arquivo " + cDirXls + cNomTmp
+    EndIf
 
 Return cErro
 
@@ -1393,11 +1403,11 @@ Static Function CountQuery(cQuery, oMsg)
         cTst := cQuery
         nSec1 := Seconds()
         dbUseArea(.T.,'TOPCONN', TCGenQry(,,cTst),cAliasCount, .F., .T.)
-        
+
         nSec2 := Seconds()
-        If nSec2 >= nSec1 
+        If nSec2 >= nSec1
            cMsgT :=  "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
-        EndIf 
+        EndIf
 
         If (cAliasCount)->(! Eof())
             nQtde := (cAliasCount)->QTDE
@@ -1419,7 +1429,7 @@ Static Function CountQuery(cQuery, oMsg)
         __cErroA :=""
         oMsg:SetText("Erro de execução query!!!")
     Else
-        oMsg:SetText(cMsgT + " |Quantidade de linhas: " + Alltrim(Transform(nQtde,"@E 999,999,999")))    
+        oMsg:SetText(cMsgT + " |Quantidade de linhas: " + Alltrim(Transform(nQtde,"@E 999,999,999")))
     EndIf
 Return
 
@@ -1430,76 +1440,76 @@ Return
 Aba de dicionario
 #################################################################################################################################
 */
-Static Function FolderDic(oDlg, np) 
+Static Function FolderDic(oDlg, np)
     Local cAliasDic := Space(20)
 
     Local oDeleOn
     Local oReadOnly
-    
+
     Local oIndice
     Local aIndice := {"SEM INDICE"}
     Local cIndice := Space(250)
     Local cPesquisa := Space(250)
 
-    Local oP1 
+    Local oP1
     Local oP2
     Local oP3
-    
-    Local oMsg 
+
+    Local oMsg
     Local cMsg   := ""
     Local oFont:= TFont():New("Consolas",, 20,, .F.,,,,, .F. )
     Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
 
     __aDicTst[np] := MyNextAlias()
-  
+
     oP1:= TPanelCss():New(,,, oDlg)
     oP1:SetCoors(TRect():New(0, 0, 75, __nWidth))
     oP1:Align :=CONTROL_ALIGN_TOP
 
         //@ 007, 005 SAY "Tabela"  of oP1 SIZE 025, 10 PIXEL FONT oFontB
-        THButton():New(006, 005, "Tabela"      , oP1, {|| DicBrowse(@cAliasDic, oP2, np, oIndice, oMsg, .T.) }, 20, 10, oFontB, "Click aqui para abrir arquivo DTC") 
+        THButton():New(006, 005, "Tabela"      , oP1, {|| DicBrowse(@cAliasDic, oP2, np, oIndice, oMsg, .T.) }, 20, 10, oFontB, "Click aqui para abrir arquivo DTC")
         @ 005, 030 GET cAliasDic of oP1 SIZE 040, 09 PIXEL PICTURE "@!" VALID DicBrowse(cAliasDic, oP2, np, oIndice, oMsg)
         @ 007, 075 SAY "Indice "   of oP1 SIZE 030, 10 PIXEL FONT oFontB
-        @ 005, 105 MSCOMBOBOX oIndice VAR cIndice ITEMS aIndice SIZE 235,10 OF oP1 PIXEL VALID MudaOrdem(cAliasDic, oIndice, np, @cPesquisa) 
-        
-        
-        THButton():New(020, 005, "Fechar"      , oP1, {|| CloseTab(@cAliasDic, np, oIndice) }, 20, 10, oFontB, "Fecha tabela") 
-        THButton():New(020, 070, "Pesquisa"    , oP1, {|| }, 30, 10, oFontB, "Para empresa compartilhada, não informar a filial!!!") 
+        @ 005, 105 MSCOMBOBOX oIndice VAR cIndice ITEMS aIndice SIZE 235,10 OF oP1 PIXEL VALID MudaOrdem(cAliasDic, oIndice, np, @cPesquisa)
+
+
+        THButton():New(020, 005, "Fechar"      , oP1, {|| CloseTab(@cAliasDic, np, oIndice) }, 20, 10, oFontB, "Fecha tabela")
+        THButton():New(020, 070, "Pesquisa"    , oP1, {|| }, 30, 10, oFontB, "Para empresa compartilhada, não informar a filial!!!")
         @ 020, 105 GET cPesquisa   of oP1 SIZE 235, 09 PIXEL VALID Posiciona(cAliasDic, cPesquisa, np )  PICTURE "@!"  when oIndice:nat > 1
-        
+
         @ 005, 350 CHECKBOX oDeleOn   VAR __lDeleOn	 PROMPT "Dele ON"	 SIZE 040,010 OF oP1 PIXEL font oFontB  VALID  DelOn(np) ;oDeleOn:bChange := {|| DelOn(np) }
-        @ 020, 350 CHECKBOX oReadOnly VAR __lReadOnly  PROMPT "Leitura"	 SIZE 040,010 OF oP1 PIXEL font oFontB 
-        
-        THButton():New(005, 390, "Filter"     , oP1, {|| FilterTab(cAliasDic, np)  }, 40, 10, oFontB, "Aplica filtro da tabela") 
-        THButton():New(020, 390, "Replace"    , oP1, {|| ReplaceTab(cAliasDic, np) }, 40, 10, oFontB, "Altera registros da tabela") 
-        
-        THButton():New(005, 430, "Locate"     , oP1, {|| LocateTab(cAliasDic, np)  }, 40, 10, oFontB, "Localiza registro conforme expressão") 
-        THButton():New(020, 430, "Goto"       , oP1, {|| GotoTab(cAliasDic, np)    }, 40, 10, oFontB, "Posiciona no recno") 
-        
-        THButton():New(005, 470, "Delete"     , oP1, {|| DeleteTab(cAliasDic, np, .T.)  }, 40, 10, oFontB, "Deleta registros da tabela") 
-        THButton():New(020, 470, "Recall"     , oP1, {|| DeleteTab(cAliasDic, np, .F.)  }, 40, 10, oFontB, "Recupera registros deletados") 
-        
-        THButton():New(005, 510, "Import"     , oP1, {|| ImportTab(cAliasDic, np)  }, 40, 10, oFontB, "Importa registros de outra tabela") 
-        THButton():New(020, 510, "Export"     , oP1, {|| ExportTab(cAliasDic, np)  }, 40, 10, oFontB, "Exporta registros para outra tabela") 
-        
-        THButton():New(005, 550, "Estrutura"  , oP1, {|| Estrutura(cAliasDic, np) }, 40, 10, oFontB, "Mostra a estrutura da tabela") 
-        THButton():New(005, 590, "Compara SX" , oP1, {|| CompSX(cAliasDic, np)    }, 40, 10, oFontB, "Compara estrutura da tabela com o dicionario") 
-        THButton():New(020, 590, "Sync SX3"   , oP1, {|| SincSX3(cAliasDic,  np)  }, 40, 10, oFontB, "Altera estrutura da tabela conforme estrutura do dicionario SX3") 
-        
-        THButton():New(005, 630, "Drop Index" , oP1, {|| DropInd(cAliasDic,  np)  }, 40, 10, oFontB, "Apaga os indices") 
+        @ 020, 350 CHECKBOX oReadOnly VAR __lReadOnly  PROMPT "Leitura"	 SIZE 040,010 OF oP1 PIXEL font oFontB
+
+        THButton():New(005, 390, "Filter"     , oP1, {|| FilterTab(cAliasDic, np)  }, 40, 10, oFontB, "Aplica filtro da tabela")
+        THButton():New(020, 390, "Replace"    , oP1, {|| ReplaceTab(cAliasDic, np) }, 40, 10, oFontB, "Altera registros da tabela")
+
+        THButton():New(005, 430, "Locate"     , oP1, {|| LocateTab(cAliasDic, np)  }, 40, 10, oFontB, "Localiza registro conforme expressão")
+        THButton():New(020, 430, "Goto"       , oP1, {|| GotoTab(cAliasDic, np)    }, 40, 10, oFontB, "Posiciona no recno")
+
+        THButton():New(005, 470, "Delete"     , oP1, {|| DeleteTab(cAliasDic, np, .T.)  }, 40, 10, oFontB, "Deleta registros da tabela")
+        THButton():New(020, 470, "Recall"     , oP1, {|| DeleteTab(cAliasDic, np, .F.)  }, 40, 10, oFontB, "Recupera registros deletados")
+
+        THButton():New(005, 510, "Import"     , oP1, {|| ImportTab(cAliasDic, np)  }, 40, 10, oFontB, "Importa registros de outra tabela")
+        THButton():New(020, 510, "Export"     , oP1, {|| ExportTab(cAliasDic, np)  }, 40, 10, oFontB, "Exporta registros para outra tabela")
+
+        THButton():New(005, 550, "Estrutura"  , oP1, {|| Estrutura(cAliasDic, np) }, 40, 10, oFontB, "Mostra a estrutura da tabela")
+        THButton():New(005, 590, "Compara SX" , oP1, {|| CompSX(cAliasDic, np)    }, 40, 10, oFontB, "Compara estrutura da tabela com o dicionario")
+        THButton():New(020, 590, "Sync SX3"   , oP1, {|| SincSX3(cAliasDic,  np)  }, 40, 10, oFontB, "Altera estrutura da tabela conforme estrutura do dicionario SX3")
+
+        THButton():New(005, 630, "Drop Index" , oP1, {|| DropInd(cAliasDic,  np)  }, 40, 10, oFontB, "Apaga os indices")
 
     oP2:= TPanelCss():New(,,, oDlg)
     oP2:SetCoors(TRect():New(0, 0, __nHeight * 0.5, __nWidth))
     oP2:Align :=CONTROL_ALIGN_ALLCLIENT
 
-        
+
 
     oP3:= TPanelCss():New(,,, oDlg)
     oP3:SetCoors(TRect():New(0, 0, 30, __nWidth))
     oP3:Align :=CONTROL_ALIGN_BOTTOM
         @ 002, 002 SAY oMsg VAR cMsg SIZE 1000,010 OF oP3 PIXEL FONT oFont
-     
-Return 
+
+Return
 
 Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
     Local nX        := 0
@@ -1509,7 +1519,7 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
     Local cAlign    := ""
     Local cPict     := ""
     Local cTipo     := ""
-    Local nTam      := 0 
+    Local nTam      := 0
     Local nDec      := 0
     Local aStruct   := {}
     Local cNomTab   := ""
@@ -1520,53 +1530,53 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
     Local lSX       := .F.
     Default lBut    := .F.
 
- 
 
-    If lBut 
-        cNomTab := cGetFile("Arquivos DTC|*.dtc|","Escolha o arquivo dtc.", 1, , .T., GETF_NETWORKDRIVE + GETF_ONLYSERVER)        
+
+    If lBut
+        cNomTab := cGetFile("Arquivos DTC|*.dtc|","Escolha o arquivo dtc.", 1, , .T., GETF_NETWORKDRIVE + GETF_ONLYSERVER)
         If Empty(cNomTab)
             Return .F.
-        EndIf 
+        EndIf
         If "\" $ cNomTab
             cAliasDic := Alltrim(Subs(cNomTab, Rat("\",cNomTab) + 1))
-        Else 
+        Else
             cAliasDic := Alltrim(cNomTab)
-        EndIf 
-        If Upper(Right(cNomTab, 4)) == ".DTC" 
+        EndIf
+        If Upper(Right(cNomTab, 4)) == ".DTC"
             cNomTab := Left(cNomTab, len(cNomTab) - 4)
         EndIf
         lDTC := .T.
-    Else 
+    Else
         If Empty(cAliasDic)
             Return
         EndIf
-        If Upper(Right(AllTrim(cAliasDic), 4)) == ".DTC"     
-            Return 
+        If Upper(Right(AllTrim(cAliasDic), 4)) == ".DTC"
+            Return
         EndIf
         cNomTab := Alltrim(cAliasDic)
-    EndIf 
+    EndIf
 
     If Left(AllTrim(cAliasDic), 3)  + "," $ "SIX,SX1,SX2,SX3,SX6,SX7,SXA,SXB,SXE,SXF,SXG," .AND. ;
-        AllTrim(Subs(cAliasDic, 4)) + "," $ __cListaEmp 
-        lSX  := .T. 
+        AllTrim(Subs(cAliasDic, 4)) + "," $ __cListaEmp
+        lSX  := .T.
         lDTC := .T.
-    EndIf 
+    EndIf
 
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Hide()
         __aDicBrw[np]:FreeChildren()
         FreeObj(__aDicBrw[np])
-        __aDicBrw[np]:= NIL 
+        __aDicBrw[np]:= NIL
     EndIf
 
     If Select(cAliasTst) > 0
         (cAliasTst)->(DbCloseArea())
     EndIf
-    
-    If lDTC 
+
+    If lDTC
         If lSX .and. len(Alltrim(cAliasDic)) == 3
             cNomTab := Alltrim(cAliasDic) + cEmpAnt + "0"
-        EndIf 
+        EndIf
         DbUseArea(.T., "DBFCDX", cNomTab, cAliasTst, .T., .F.)
         If NetErr()
             MsgAlert("Erro de abertura do arquivo!")
@@ -1575,9 +1585,9 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
         EndIf
         If Right(lower(cNomTab), 11) == "sigamat.emp"
             cNomInd := Left(cNomTab, len(cNomTab) - 4) + ".IND"
-        Else 
+        Else
             cNomInd := cNomTab + ".CDX"
-        EndIf 
+        EndIf
         If File(cNomInd)
             OrdListadd(cNomInd)
         EndIf
@@ -1586,15 +1596,15 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
             SX2->(DbSetOrder(1))
             If SX2->(DbSeek(Alltrim(cAliasDic)))
                 cNomTab := Alltrim(SX2->X2_ARQUIVO)
-            EndIf 
+            EndIf
             RestArea(aAreaSX2)
-        EndIf 
+        EndIf
 
         If ! MsFile(cNomTab,, "TOPCONN")
             MsgAlert("Arquivo " + cNomTab + " não existe no banco!")
             RestArea(aArea)
-            Return .F. 
-        EndIf                
+            Return .F.
+        EndIf
 
         DbUseArea(.T., "TOPCONN", cNomTab, cAliasTst, .T., .F.)
         If NetErr()
@@ -1602,33 +1612,33 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
             Return .F.
         EndIf
 
-        While nOrd <= 36 
+        While nOrd <= 36
             cNomInd := cNomTab + RetAsc(Str(nOrd += 1), 1, .T.)
             If TcCanOpen(cNomTab, cNomInd)
                OrdListadd(cNomInd)
             EndIf
         End
-    EndIf 
-    
+    EndIf
+
     If Select(cAliasTst) == 0
         MsgAlert("Não foi possivel abrir a tabela!!!")
         Return .F.
-    EndIf 
+    EndIf
 
     // carrega a aIndice
     nQtdInd := 1
     While .t.
         cKey := (cAliasTst)->(IndexKey(nQtdInd))
         If Empty(cKey)
-            Exit 
-        EndIf 
+            Exit
+        EndIf
         aadd(aIndice, AllTrim(cKey))
         nQtdInd++
     End
     oIndice:SetItems(aIndice)
     If Len(aIndice) > 1
         oIndice:nat := 2
-    EndIf 
+    EndIf
  	oIndice:Refresh()
 
 
@@ -1646,15 +1656,15 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
             If cTipo == "N"
                 cAlign := "RIGHT"
                 If nDec > 0
-                    cPict := Repl("9", nTam - nDec + 1)  + "." + Repl("9", nDec) 
+                    cPict := Repl("9", nTam - nDec + 1)  + "." + Repl("9", nDec)
                 Else
-                    cPict := Repl("9", nTam ) 
-                EndIf 
-            EndIf 
+                    cPict := Repl("9", nTam )
+                EndIf
+            EndIf
             __aDicBrw[np]:AddColumn( TCColumn():New( (cAliasTst)->(Field(nx)) , &("{ || " + cAliasTst + "->" + (cAliasTst)->(FieldName(nX)) + "}"), cPict,,,, cAlign))
         Else
             __aDicBrw[np]:AddColumn( TCColumn():New( (cAliasTst)->(Field(nx)), { || "Memo" },,,,,.F.) )
-        EndIf 
+        EndIf
     Next nX
 
     __aDicBrw[np]:lColDrag	 := .T.
@@ -1667,7 +1677,7 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
     __aDicBrw[np]:bLDblClick := {|| AltReg(__aDicBrw[np], __aDicTst[np]) }
     __aDicBrw[np]:bDelOk	 := {|| DelRecno(nP)     }
     __aDicBrw[np]:bSuperDel	 := {|| DelRecno(nP, .F.)}
-    __aDicBrw[np]:bAdd       := {|| AddRecno(nP)     } 
+    __aDicBrw[np]:bAdd       := {|| AddRecno(nP)     }
     __aDicBrw[np]:bGotFocus  := {|| DelOn(np)  }
     __aDicBrw[np]:SetBlkColor({|| If((cAliasTst)->(Deleted()),CLR_WHITE,CLR_BLACK)})
     __aDicBrw[np]:SetBlkBackColor({|| If((cAliasTst)->(Deleted()),CLR_LIGHTGRAY,CLR_WHITE)})
@@ -1676,7 +1686,7 @@ Static Function DicBrowse(cAliasDic, oP2, np, oIndice, oMsg, lBut)
 
     (cAliasTst)->(AtuMsg(__aDicBrw[np], oMsg))
 
-Return .T. 
+Return .T.
 
 
 
@@ -1686,12 +1696,12 @@ Static Function MudaOrdem(cAlias, oIndice, np, cPesquisa)
     Local cAliasTst := __aDicTst[np]
 
     If Empty(cAlias)
-        Return  
-    EndIf 
+        Return
+    EndIf
 
     If Select(cAliasTst) == 0
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     (cAliasTst)->(DBSetOrder(nOrdem))
 
@@ -1713,33 +1723,33 @@ Static Function Posiciona(cAlias, cPesquisa, np)
 
     If Empty(cPesquisa)
         Return .t.
-    EndIf 
+    EndIf
 
     cAliasTst := __aDicTst[np]
 
     If Select(cAliasTst) == 0
         Return .F.
-    EndIf 
+    EndIf
 
     aAreaTMP  := (cAliasTst)->(GetArea(cAlias))
 
-    
+
     If ! AllTrim(cAlias) + "," $ "SIX,SX1,SX2,SX3,SX6,SX7,SXA,SXB,SXE,SXF,SXG,"
         SX2->(DbSetOrder(2))
         If SX2->(DbSeek(Alltrim(cAlias)))
             cAliasSX2 := SX2->X2_CHAVE
             If Empty(xFilial(cAliasSX2))
                 cPesquisa := xFilial(cAliasSX2) + Alltrim(cPesquisa)
-            EndIf     
-        EndIf 
+            EndIf
+        EndIf
         RestArea(aAreaSX2)
-    EndIf 
+    EndIf
 
     If ! (cAliasTst)->(DBSeek(Rtrim(cPesquisa)))
         MsgAlert("Não encontrado!!!")
         RestArea(aAreaTMP)
         RestArea(aArea)
-    EndIf  
+    EndIf
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Refresh()
         __aDicBrw[np]:SetFocus()
@@ -1749,12 +1759,12 @@ Return
 
 Static Function CloseTab(cAliasDic, np, oIndice)
     Local cAliasTst  := __aDicTst[np]
-    
+
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Hide()
         __aDicBrw[np]:FreeChildren()
         FreeObj(__aDicBrw[np])
-        __aDicBrw[np]:= NIL 
+        __aDicBrw[np]:= NIL
     EndIf
     If Select(cAliasTst) > 0
         (cAliasTst)->(DbCloseArea())
@@ -1762,7 +1772,7 @@ Static Function CloseTab(cAliasDic, np, oIndice)
     cAliasDic := Space(20)
     oIndice:nat := 1
 
-Return 
+Return
 
 Static Function  FilterTab(cAliasDic, np)
     Local cAliasTst  := __aDicTst[np]
@@ -1770,9 +1780,9 @@ Static Function  FilterTab(cAliasDic, np)
     Local cFiltroA:= ""
 
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
-    
+        Return
+    EndIf
+
     cFiltroA := Alltrim((cAliasTst)->(dbFilter()))
     cFiltro := TelaExpr(cAliasTst, cFiltroA )
 
@@ -1793,12 +1803,12 @@ Return Nil
 
 Static Function TelaExpr(cAliasTst, cExpre)
     Local oFontB    := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
-    Local oDlg 
+    Local oDlg
     Local oExpre
     Local oPS
     Local oPI
     Local lOk       := .F.
-    Local oCampos 
+    Local oCampos
     Local aCampos   := {}
     Local cCampos   := ""
     Local oOperS
@@ -1809,23 +1819,23 @@ Static Function TelaExpr(cAliasTst, cExpre)
     Local nx        := 0
     Local oBAdic
     Local oBLimp
-    Local oBE   
-    Local oBOu  
-    Local oBPI  
-    Local oBPF 
-    
-    Default cExpre := "" 
+    Local oBE
+    Local oBOu
+    Local oBPI
+    Local oBPF
+
+    Default cExpre := ""
 
     For nx:= 1 to len(aStruct)
         If aStruct[nx, 2] == "L" .or. aStruct[nx, 2] == "M"
-            Loop 
-        EndIf 
+            Loop
+        EndIf
         aadd(aCampos, aStruct[nx, 1])
-    Next 
+    Next
 
     cCampos := aCampos[1]
     aOperS  := {"Igual a","Diferente de","Menor que","Menor que ou igual a", "Maior que","Maior que ou igual a","Contem a expressão", "Não contem","Está incluido em", "Não está incluido em" }
-    
+
     DEFINE MSDIALOG oDlg FROM	0, 0 TO 300, 550 TITLE "Expressão para filtro" PIXEL
         oPS:= TPanelCss():New(,,, oDlg)
         oPS:SetCoors(TRect():New(0, 0, 75, 500))
@@ -1840,30 +1850,30 @@ Static Function TelaExpr(cAliasTst, cExpre)
             @ 015, 130 Get        oExpCmp  VAR uExpCmp  of oPS SIZE 090, 09 PIXEL PICT "@!"
 
             AtuExpCmp(cCampos, oOperS, oExpCmp, aStruct)
-    
-            oBAdic:= THButton():New(016, 220, "Adiciona"        ,oPS, {|| AdicExpr(cCampos, oOperS, oExpCmp, aStruct, @cExpre) }, 35, 10, oFontB, "Adiciona na expressão final") 
-            oBLimp:= THButton():New(026, 005, "Limpa Expressão" ,oPS, {|| cExpre:= ""              }, 55, 10, oFontB, "Limpa a expressão final") 
-            oBE   := THButton():New(026, 220, "e"               ,oPS, {|| AdicOperad(@cExpre, "e") }, 10, 10, oFontB, "Inclui o operador .and. ") 
-            oBOu  := THButton():New(026, 232, "ou"              ,oPS, {|| AdicOperad(@cExpre, "ou")}, 10, 10, oFontB, "Inclui o operador .or. ") 
-            oBPI  := THButton():New(026, 244, "("               ,oPS, {|| AdicParen(@cExpre, "(")  }, 10, 10, oFontB, "Abre parenteses") 
-            oBPF  := THButton():New(026, 256, ")"               ,oPS, {|| AdicParen(@cExpre, ")")  }, 10, 10, oFontB, "Fecha Parenteses") 
-    
+
+            oBAdic:= THButton():New(016, 220, "Adiciona"        ,oPS, {|| AdicExpr(cCampos, oOperS, oExpCmp, aStruct, @cExpre) }, 35, 10, oFontB, "Adiciona na expressão final")
+            oBLimp:= THButton():New(026, 005, "Limpa Expressão" ,oPS, {|| cExpre:= ""              }, 55, 10, oFontB, "Limpa a expressão final")
+            oBE   := THButton():New(026, 220, "e"               ,oPS, {|| AdicOperad(@cExpre, "e") }, 10, 10, oFontB, "Inclui o operador .and. ")
+            oBOu  := THButton():New(026, 232, "ou"              ,oPS, {|| AdicOperad(@cExpre, "ou")}, 10, 10, oFontB, "Inclui o operador .or. ")
+            oBPI  := THButton():New(026, 244, "("               ,oPS, {|| AdicParen(@cExpre, "(")  }, 10, 10, oFontB, "Abre parenteses")
+            oBPF  := THButton():New(026, 256, ")"               ,oPS, {|| AdicParen(@cExpre, ")")  }, 10, 10, oFontB, "Fecha Parenteses")
+
         oExpre := tMultiget():new(,, bSETGET(cExpre), oDlg)
         oExpre:Align := CONTROL_ALIGN_ALLCLIENT
-        
+
         oPI:= TPanelCss():New(,,, oDlg)
         oPI:SetCoors(TRect():New(0, 0, 30, 500))
         oPI:Align :=CONTROL_ALIGN_BOTTOM
-            THButton():New(003, 005, "Ok"      ,oPI, {|| If((cAliasTst)->(ExpreOk(cExpre)), (lOk:= .T., oDlg:End()), .F.)}, 20, 10, oFontB, "Confirma a expressão?") 
-            THButton():New(003, 030, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!") 
+            THButton():New(003, 005, "Ok"      ,oPI, {|| If((cAliasTst)->(ExpreOk(cExpre)), (lOk:= .T., oDlg:End()), .F.)}, 20, 10, oFontB, "Confirma a expressão?")
+            THButton():New(003, 030, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!")
 
     ACTIVATE MSDIALOG oDlg CENTERED
 
     If ! lOk
         cExpre := ""
-    EndIf 
+    EndIf
 
-Return cExpre 
+Return cExpre
 
 Static Function AtuExpCmp(cCampo, oOperS, oExpCmp, aStruct)
     Local aOper   := {"==", "!=", "<", "<=", ">", ">=", "..", "!.", "$", "!x"}
@@ -1871,15 +1881,15 @@ Static Function AtuExpCmp(cCampo, oOperS, oExpCmp, aStruct)
     Local nTam    := 0
     Local nDec    := 0
     Local cOper   := aOper[oOperS:nAt]
-    Local uIniCmp := NIL 
+    Local uIniCmp := NIL
     Local cPicCmp := "@!"
 
     DEFAULT lFirst := .t.
 
     np := Ascan(aStruct, {|x| Alltrim(Upper(x[1])) == Alltrim(Upper(cCampo))})
     If Empty(np)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     cTipo := aStruct[np, 2]
     nTam  := aStruct[np, 3]
@@ -1892,19 +1902,19 @@ Static Function AtuExpCmp(cCampo, oOperS, oExpCmp, aStruct)
         If nDec == 0
             cPicCmp := Repl("9", nTam)
         Else
-            cPicCmp := Repl("9", nTam - nDec -1) + "." + Repl("9", nDec) 
-        Endif 
+            cPicCmp := Repl("9", nTam - nDec -1) + "." + Repl("9", nDec)
+        Endif
         uIniCmp := 0
-    ElseIf cTipo == "C" 
+    ElseIf cTipo == "C"
         cPicCmp := "@!"
         uIniCmp := Space(nTam)
-    EndIf 
-    
+    EndIf
+
     If cOper $ "$|!x"
        uIniCmp   := Space(200)
        cPicCmp := "@!"
     EndIf
-    
+
     SetFocus(oExpCmp:hWnd)
     oExpCmp:oGet:Picture := cPicCmp
     oExpCmp:oGet:Pos     := 0
@@ -1913,130 +1923,130 @@ Static Function AtuExpCmp(cCampo, oOperS, oExpCmp, aStruct)
     oExpCmp:oGet:UpdateBuffer()
     oExpCmp:Refresh()
 
-Return  
+Return
 
 Static Function AdicExpr(cCampo, oOperS, oExpCmp, aStruct, cExpre)
     Local cMemo := StrTran(Alltrim(cExpre), CRLF, "")
     Local aOper   := {"==", "!=", "<", "<=", ">", ">=", "..", "!.", "$", "!x"}
     Local cOper   := aOper[oOperS:nAt]
-    Local uExpCmp := oExpCmp:cText 
+    Local uExpCmp := oExpCmp:cText
     Local cExpAtu := ""
     Local cTipo   := ""
     Local np      := 0
 
     If ! Empty(cMemo) .and. Right(Upper(cMemo), 5) <> ".AND." .and. Right(Upper(cMemo), 4) <> ".OR." .AND. Right(Upper(cMemo), 1) <> "("
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     np := Ascan(aStruct, {|x| Alltrim(Upper(x[1])) == Alltrim(Upper(cCampo))})
     If Empty(np)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     cTipo := aStruct[np, 2]
 
     If cTipo == "C"
         If cOper == ".."     // "Conten a expressão"
-            cExpAtu := "'" + Alltrim(uExpCmp) + "' $ Alltrim("+cCampo+")" 
+            cExpAtu := "'" + Alltrim(uExpCmp) + "' $ Alltrim("+cCampo+")"
         ElseIf cOper == "!." //"Não contem"
-            cExpAtu := "! '" + Alltrim(uExpCmp) + "' $ Alltrim("+cCampo+")" 
+            cExpAtu := "! '" + Alltrim(uExpCmp) + "' $ Alltrim("+cCampo+")"
         ElseIf cOper == "!x"
             cExpAtu := "! Alltrim(" + cCampo + ") $ '" + Alltrim(uExpCmp) + "'"
-        ElseIf cOper == "$"    
+        ElseIf cOper == "$"
             cExpAtu := "Alltrim(" + cCampo + ") $ '" + Alltrim(uExpCmp) + "'"
-        Else 
+        Else
             cExpAtu := cCampo + " " + cOper + " '" + uExpCmp + "'"
-        EndIf 
+        EndIf
     ElseIf cTipo == "D"
         If oOperS:nAt > 6
             MsgAlert("Operador não permitido!")
-            Return 
-        EndIf 
+            Return
+        EndIf
         cExpAtu := "DtoS(" + cCampo + ") " + cOper + " '" + DtoS(uExpCmp) + "'"
     ElseIf cTipo == "N"
         If oOperS:nAt > 6
             MsgAlert("Operador não permitido!")
-            Return 
-        EndIf 
-        cExpAtu := cCampo + " " + cOper + " " + cValToChar(uExpCmp) 
-    EndIf  
+            Return
+        EndIf
+        cExpAtu := cCampo + " " + cOper + " " + cValToChar(uExpCmp)
+    EndIf
 
     cExpre := cMemo + " " + cExpAtu + " "
 
-Return 
+Return
 
 Static Function AdicOperad(cExpre, cOper)
     Local cMemo := StrTran(Alltrim(cExpre), CRLF, "")
     Local cExpAtu := ""
 
-    If Empty(cMemo) 
-        Return 
-    EndIf 
+    If Empty(cMemo)
+        Return
+    EndIf
     If ! Empty(cMemo) .and. Right(Upper(cMemo), 5) <> ".AND." .and. Right(Upper(cMemo), 4) == ".OR."
-        Return 
-    EndIf 
+        Return
+    EndIf
     If Right(Upper(cMemo), 5) == ".AND."
-        Return 
-    EndIf 
+        Return
+    EndIf
     If Right(Upper(cMemo), 4) == ".OR."
-        Return 
-    EndIf 
+        Return
+    EndIf
     If cOper == "e"
         cExpAtu := " .AND. "
     ElseIf cOper == "ou"
         cExpAtu := " .OR. "
-    EndIf 
+    EndIf
 
     cExpre := cMemo + " " + cExpAtu + " "
-    
-Return 
+
+Return
 
 Static Function AdicParen(cExpre, cOper)
     Local cMemo := StrTran(Alltrim(cExpre), CRLF, "")
     Local cUltByte := Right(Upper(cMemo), 1)
     Local nQPar := 0
     Local nx := 0
-    
+
     If cOper == "("
         If cUltByte == ")"
-            Return 
-        EndIf 
-    Else 
+            Return
+        EndIf
+    Else
         If cUltByte == "("
-            Return 
-        EndIf 
-    EndIf 
+            Return
+        EndIf
+    EndIf
 
     For nx:= 1 to len(cMemo)
         If Subs(cMemo, nx, 1) == "("
-            nQPar++ 
-        EndIf 
+            nQPar++
+        EndIf
         If Subs(cMemo, nx, 1) == ")"
-            nQPar-- 
-        EndIf 
-    Next 
-    
+            nQPar--
+        EndIf
+    Next
+
     If cOper == ")"
         If Empty(nQpar)
-            Return 
-        EndIf 
-    EndIf 
+            Return
+        EndIf
+    EndIf
     cExpre := cMemo + " " + cOper + " "
-    
+
 Return
 
 
 Static Function ExpreOk(cExp)
     Local lOk
-    Local oErro 
+    Local oErro
     Local cErro:= ""
 
     If Empty(cExp)
         Return .t.
-    EndIf 
+    EndIf
 
     __cErroA:= ""
-    oErro := ErrorBlock( { |oErro| ChkErr( oErro ) } ) 
+    oErro := ErrorBlock( { |oErro| ChkErr( oErro ) } )
     Begin Sequence
         lOk := &(cExp) <> NIL
     End Sequence
@@ -2050,44 +2060,44 @@ Static Function ExpreOk(cExp)
         MostraErro()
         __cErroA :=""
         lOk := .F.
-    EndIf 
+    EndIf
 
-Return lOk 
+Return lOk
 
 
 Static Function TelaPar(cAliasTst, cTitulo)
     Local oFontB    := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
-    Local oDlg 
+    Local oDlg
     Local oPS
     Local oPI
-    Local oPF 
+    Local oPF
     Local oPFS
     Local oPW
     Local oPWS
     Local oPO
     Local lOk       := .F.
-    Local oCampos 
+    Local oCampos
     Local aCampos   := {}
     Local cCampos   := ""
-    Local oConteudo 
+    Local oConteudo
     Local cConteudo := '""' + Space(248)
     Local aStruct   := (cAliasTst)->(DbStruct())
-    
+
     Local oExpF
     Local cExpF     := ""
     Local oExpW
     Local cExpW     := ""
-    Local oOpcoes 
+    Local oOpcoes
     Local aOpcoes   := {"Todos","Restantes", "Próximos"}
     Local copcoes   := "Todos"
     Local oSayProx
-    Local oProximo  
+    Local oProximo
     Local nProximo  := 0
-    Local oFormato   
+    Local oFormato
     Local aFormato  := {"Tabela", "DTC", "CSV", "XML", "XLS (DBF4)"}
     Local cFormato  := "Tabela"
     Local cArquivo  := Space(20)
-    Local oArquivo   
+    Local oArquivo
     Local lRest     := .F.
     Local nx        := 0
     Local nAltura   := 300
@@ -2098,20 +2108,20 @@ Static Function TelaPar(cAliasTst, cTitulo)
 
     If lReplace .or. lExport
         nAltura:= 400
-    EndIf 
+    EndIf
     If lLocate
         nAltura:= 150
-    EndIf 
+    EndIf
 
     For nx:= 1 to len(aStruct)
         If aStruct[nx, 2] == "L" .or. aStruct[nx, 2] == "M"
-            Loop 
-        EndIf 
+            Loop
+        EndIf
         aadd(aCampos, aStruct[nx, 1])
-    Next 
+    Next
 
     cCampos := aCampos[1]
-    
+
     DEFINE MSDIALOG oDlg FROM	0, 0 TO nAltura, 600  TITLE cTitulo PIXEL
         If lReplace .and. ! lLocate
             oPS:= TPanelCss():New(,,, oDlg)
@@ -2120,25 +2130,25 @@ Static Function TelaPar(cAliasTst, cTitulo)
 
                 @ 005, 005 SAY "Campos"      of oPS SIZE 050, 10 PIXEL FONT oFontB
                 @ 005, 065 SAY "Conteudo Advpl"  of oPS SIZE 050, 10 PIXEL FONT oFontB
-                
-                @ 015, 005 MSCOMBOBOX oCampos  VAR cCampos  ITEMS aCampos   SIZE 50,09 PIXEL OF oPS 
+
+                @ 015, 005 MSCOMBOBOX oCampos  VAR cCampos  ITEMS aCampos   SIZE 50,09 PIXEL OF oPS
                 @ 015, 065 Get     oConteudo  VAR cConteudo  of oPS SIZE 220, 09 PIXEL PICT "@!"
 
-        EndIf 
-        If lExport 
+        EndIf
+        If lExport
             oPE:= TPanelCss():New(,,, oDlg)
             oPE:SetCoors(TRect():New(0, 0, 75, 500))
             oPE:Align :=CONTROL_ALIGN_TOP
 
                 @ 005, 005 SAY "Formato"  of oPE SIZE 050, 10 PIXEL FONT oFontB
                 @ 005, 065 SAY "Arquivo"  of oPE SIZE 050, 10 PIXEL FONT oFontB
-                
-                @ 015, 005 MSCOMBOBOX oFormato  VAR cFormato ITEMS aFormato   SIZE 50,09 PIXEL OF oPE  VALID (cArquivo :=Space(20), If(cFormato=="Tabela", oBGF:Hide(),oBGF:Show()  ) , .t.) 
+
+                @ 015, 005 MSCOMBOBOX oFormato  VAR cFormato ITEMS aFormato   SIZE 50,09 PIXEL OF oPE  VALID (cArquivo :=Space(20), If(cFormato=="Tabela", oBGF:Hide(),oBGF:Show()  ) , .t.)
                 @ 015, 065 Get        oArquivo  VAR cArquivo of oPE SIZE 200, 09 PIXEL PICT "@!" WHEN oFormato:nAt == 1
                 oBGF := THButton():New(015, 267, "..."        , oPE, {|| SelArquivo(cFormato, @cArquivo, "E"),  oDlg:cCaption := "Export para " + RetFileName(cArquivo) + "." + cFormato }, 10, 10, oFontB, "Informa o arquivo")
                 oBGF:Hide()
-        EndIf 
-        
+        EndIf
+
         oPF:= TPanelCss():New(,,, oDlg)
         oPF:SetCoors(TRect():New(0, 0, 100, 500))
         oPF:Align :=CONTROL_ALIGN_TOP
@@ -2146,14 +2156,14 @@ Static Function TelaPar(cAliasTst, cTitulo)
             oPFS:SetCoors(TRect():New(0, 0, 30, 500))
             oPFS:Align :=CONTROL_ALIGN_TOP
                 @ 005, 005 SAY "Expressão clausula [FOR]"      of oPFS SIZE 100, 10 PIXEL FONT oFontB
-                THButton():New(004, 95, "..."        , oPFS, {|| cExpF := TelaExpr(cAliasTst, cExpF ) }, 10, 10, oFontB, "Monta expressão para clausula FOR") 
+                THButton():New(004, 95, "..."        , oPFS, {|| cExpF := TelaExpr(cAliasTst, cExpF ) }, 10, 10, oFontB, "Monta expressão para clausula FOR")
 
             oExpF := tMultiget():new(,, bSETGET(cExpF), oPF)
             oExpF:Align := CONTROL_ALIGN_ALLCLIENT
 
         If lLocate
             oPF:Align :=CONTROL_ALIGN_ALLCLIENT
-        Else 
+        Else
             oPW:= TPanelCss():New(,,, oDlg)
             oPW:SetCoors(TRect():New(0, 0, 100, 500))
             oPW:Align :=CONTROL_ALIGN_TOP
@@ -2161,7 +2171,7 @@ Static Function TelaPar(cAliasTst, cTitulo)
                 oPWS:SetCoors(TRect():New(0, 0, 30, 500))
                 oPWS:Align :=CONTROL_ALIGN_TOP
                     @ 005, 004 SAY "Expressão clausula [WHILE]"      of oPWS SIZE 100, 10 PIXEL FONT oFontB
-                    THButton():New(004, 95, "..."        , oPWS, {|| cExpW := TelaExpr(cAliasTst, cExpW ) }, 10, 10, oFontB, "Monta expressão para clausula WHILE") 
+                    THButton():New(004, 95, "..."        , oPWS, {|| cExpW := TelaExpr(cAliasTst, cExpW ) }, 10, 10, oFontB, "Monta expressão para clausula WHILE")
 
                 oExpW := tMultiget():new(,, bSETGET(cExpW), oPW)
                 oExpW:Align := CONTROL_ALIGN_ALLCLIENT
@@ -2170,25 +2180,25 @@ Static Function TelaPar(cAliasTst, cTitulo)
             oPO:SetCoors(TRect():New(0, 0, 75, 500))
             oPO:Align :=CONTROL_ALIGN_ALLCLIENT
                 @ 005, 004 SAY "Opções "  of oPO SIZE 050, 10 PIXEL FONT oFontB
-                @ 005, 065 SAY oSayProx  PROMPT "Próximos"  of oPO SIZE 030, 10 PIXEL FONT oFontB 
+                @ 005, 065 SAY oSayProx  PROMPT "Próximos"  of oPO SIZE 030, 10 PIXEL FONT oFontB
 
                 @ 015, 005 MSCOMBOBOX oOpcoes   VAR cOpcoes ITEMS aOpcoes   SIZE 50,09 PIXEL OF oPO  VALID If( cOpcoes == "Próximos" , (oSayProx:Show(),oProximo:Show()) , (oSayProx:Hide(),oProximo:Hide()))
                 @ 015, 065 Get        oProximo  VAR nProximo  of oPO SIZE 20, 09 PIXEL PICT "9999999"
-            
+
                 oSayProx:Hide()
                 oProximo:Hide()
         EndIf
         oPI:= TPanelCss():New(,,, oDlg)
         oPI:SetCoors(TRect():New(0, 0, 30, 500))
         oPI:Align :=CONTROL_ALIGN_BOTTOM
-            THButton():New(003, 005, "Ok"      ,oPI, {|| If((cAliasTst)->(ExpreOk(cExpF)) .and. (cAliasTst)->(ExpreOk(cExpW)) .and. If(lReplace, (cAliasTst)->(ExpreOk(cCampos + "==" + Alltrim(cConteudo)  )), .T.) , (lOk:= .T., oDlg:End()), .F.)}, 20, 10, oFontB, "Confirma os parâmetros?") 
-            THButton():New(003, 030, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!") 
+            THButton():New(003, 005, "Ok"      ,oPI, {|| If((cAliasTst)->(ExpreOk(cExpF)) .and. (cAliasTst)->(ExpreOk(cExpW)) .and. If(lReplace, (cAliasTst)->(ExpreOk(cCampos + "==" + Alltrim(cConteudo)  )), .T.) , (lOk:= .T., oDlg:End()), .F.)}, 20, 10, oFontB, "Confirma os parâmetros?")
+            THButton():New(003, 030, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!")
 
     ACTIVATE MSDIALOG oDlg CENTERED
 
     If ! lOk
         Return {}
-    EndIf 
+    EndIf
 
     cConteudo := Alltrim(cConteudo)
 
@@ -2196,29 +2206,29 @@ Static Function TelaPar(cAliasTst, cTitulo)
     cExpF := StrTran(Alltrim(cExpF), CRLF, "")
     If Empty(cExpF)
         cExpF := NIL
-    EndIf 
+    EndIf
 
     cExpW := Alltrim(cExpW)
     cExpW := StrTran(Alltrim(cExpW), CRLF, "")
     If Empty(cExpW)
         cExpW := NIL
-    EndIf 
+    EndIf
 
     If ! cOpcoes == "Próximos"
-        nProximo := NIL 
+        nProximo := NIL
 
         If cOpcoes == "Restantes"
             lRest := .T.
-        EndIf 
+        EndIf
     EndIf
 
     If lLocate
         cExpW := " ! (" + cExpF + ") "
-    EndIf 
+    EndIf
 
     cArquivo := Alltrim(cArquivo)
 
-Return {cCampos, cConteudo, cExpF, cExpW, nProximo, lRest, cFormato, cArquivo} 
+Return {cCampos, cConteudo, cExpF, cExpW, nProximo, lRest, cFormato, cArquivo}
 
 Static Function SelArquivo(cFormato, cArquivo, cModo)
     Local cFile     := ""
@@ -2227,15 +2237,15 @@ Static Function SelArquivo(cFormato, cArquivo, cModo)
     Local nPos      := 0
     Local lUsaAnt   := .F.
     Local lSucesso  := .F.
-    
+
     cFile := cGetFile("Arquivos " + cExt + " (*." + cExt + ") |*." + cExt + "|" , "Informe o arquivo", 1, "C:\", .T., GETF_LOCALHARD + GETF_LOCALFLOPPY + GETF_NETWORKDRIVE )
 
     If Empty(cFile)
         Return .F.
     Endif
     If cModo == "E"  //exportação
-        If ! Upper(Right(cFile, 4)) == "." + cExt 
-            cFile += "." + cExt 
+        If ! Upper(Right(cFile, 4)) == "." + cExt
+            cFile += "." + cExt
         EndIf
         If File(cFile)
             If ! MsgYesNo("Confirma a substituição do arquivo?")
@@ -2246,24 +2256,24 @@ Static Function SelArquivo(cFormato, cArquivo, cModo)
     Else
         If ! File(cFile)
             MsgAlert("arquivo não encontrado!")
-        EndIf 
-        If Subs(cfile, 2, 2) == ":\"    
+        EndIf
+        If Subs(cfile, 2, 2) == ":\"
             nPos := Rat("\", cFile)
             cNomArq := Subs(cFile, nPos + 1)
-            
-            If File("system\tidev\" + cNomArq) 
+
+            If File("system\tidev\" + cNomArq)
                 lUsaAnt := MsgYesNo("Esse arquivo já existe em 'system\tidev\', deseja reutilizar o arquivo?")
                 If ! lUsaAnt
                     MsgAlert("Será feito uma copia temporaria no servido em 'system\tidev\' para processamento!")
                     If FErase("system\tidev\" + cNomArq) == -1
                         MsgAlert("o arquivo em 'system\tidev' não pode ser substituido!")
                         Return .f.
-                    EndIf 
+                    EndIf
                 EndIf
-            Else 
+            Else
                 MsgAlert("Será feito uma copia temporaria no servido em 'system\tidev\' para processamento!")
-            EndIf 
-            If ! lUsaAnt 
+            EndIf
+            If ! lUsaAnt
                 Processa({|| lSucesso := CPYT2S(cFile, "system\tidev\", .T.) }, "Copiando arquivo para \system\tidev..")
                 If ! lSucesso
                     MsgAlert("Erro ao copiar arquivo para 'system\tidev\'")
@@ -2271,11 +2281,11 @@ Static Function SelArquivo(cFormato, cArquivo, cModo)
                 EndIf
             EndIf
             cFile := "system\tidev\" + cNomArq
-        EndIf 
-    EndIf 
+        EndIf
+    EndIf
     cArquivo := cFile
 
-Return 
+Return
 
 
 
@@ -2289,25 +2299,25 @@ Static Function ReplaceTab(cAliasDic, np)
     Local lRest      := NIL
     Local cCampo     := ""
     Local cConteudo  := ""
-    
+
 
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
-    
-    If __lReadOnly 
+        Return
+    EndIf
+
+    If __lReadOnly
         MsgAlert("Somente leitura!!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     aRet := aClone(TelaPar(cAliasTst, "Replace"))
     If Empty(aRet)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If ! MsgYesNo("Confirma a alteração dos registros?")
         Return
-    EndIf 
+    EndIf
 
     cCampo    := aRet[1]
     cConteudo := aRet[2]
@@ -2318,16 +2328,16 @@ Static Function ReplaceTab(cAliasDic, np)
 
     cComando := "DbrLock(), _FIELD->" + cCampo + " := " + cConteudo + ", DbUnlock(), DbCommitall() "
 
-    
+
     (cAliasTst)->(TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, "Alterando registos"))
-    
+
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Refresh()
         __aDicBrw[np]:SetFocus()
         eval(__aDicBrw[np]:bChange)
     EndIf
 
-Return     
+Return
 
 Static Function LocateTab(cAliasDic, np)
     Local cAliasTst  := __aDicTst[np]
@@ -2339,17 +2349,17 @@ Static Function LocateTab(cAliasDic, np)
     Local lRest      := NIL
     Local cCampo     := ""
     Local cConteudo  := ""
-    
+
 
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
-   
+        Return
+    EndIf
+
 
     aRet := aClone(TelaPar(cAliasTst, "Locate"))
     If Empty(aRet)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
 
     cCampo    := aRet[1]
@@ -2362,24 +2372,24 @@ Static Function LocateTab(cAliasDic, np)
     cComando := ""
 
     (cAliasTst)->(TelaDbEval(cComando, cFor, cWhile, Nil, .T., "Localizando registos", .F.))
-    
+
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Refresh()
         __aDicBrw[np]:SetFocus()
         eval(__aDicBrw[np]:bChange)
     EndIf
 
-Return     
+Return
 
 Static Function GotoTab(cAliasDic, np)
     Local cAliasTst := __aDicTst[np]
     Local nRecno    := 0
     Local oFontB    := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
     Local lOk       := .F.
-        
+
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     DEFINE MSDIALOG oDlg FROM	0, 0 TO 100, 200 TITLE "Posiciona no registro" PIXEL
         oPS:= TPanelCss():New(,,, oDlg)
@@ -2388,31 +2398,31 @@ Static Function GotoTab(cAliasDic, np)
 
             @ 005, 030 SAY "Recno"      of oPS SIZE 040, 10 PIXEL FONT oFontB
             @ 015, 030 Get oRecno  VAR nRecno  of oPS SIZE 040, 09 PIXEL PICT "999999999999"
-       
+
         oPI:= TPanelCss():New(,,, oDlg)
         oPI:SetCoors(TRect():New(0, 0, 30, 500))
         oPI:Align :=CONTROL_ALIGN_BOTTOM
-            THButton():New(003, 015, "Ok"      ,oPI, {|| lOk:= .T., oDlg:End() }, 20, 10, oFontB, "Confirma?") 
-            THButton():New(003, 050, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!") 
+            THButton():New(003, 015, "Ok"      ,oPI, {|| lOk:= .T., oDlg:End() }, 20, 10, oFontB, "Confirma?")
+            THButton():New(003, 050, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!")
 
     ACTIVATE MSDIALOG oDlg CENTERED
 
     If ! lOk .OR. nRecno == 0
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     (cAliasTst)->(DbGoto(nRecno))
 
     If __lDeleON .and. (cAliasTst)->(Deleted())
         MsgAlert("Registro deletado, desative Dele On para visualizar!")
-    EndIf 
+    EndIf
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Refresh()
         __aDicBrw[np]:SetFocus()
         eval(__aDicBrw[np]:bChange)
     EndIf
 
-Return 
+Return
 
 Static Function DeleteTab(cAliasDic, np, lDelete)
     Local cAliasTst  := __aDicTst[np]
@@ -2422,31 +2432,31 @@ Static Function DeleteTab(cAliasDic, np, lDelete)
     Local cWhile     := ""
     Local nProxReg   := NIL
     Local lRest      := NIL
-    
+
 
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
-    
-    If __lReadOnly 
+        Return
+    EndIf
+
+    If __lReadOnly
         MsgAlert("Somente leitura!!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     aRet := aClone(TelaPar(cAliasTst, If(lDelete,"Delete", "Recall")))
     If Empty(aRet)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If lDelete
         If ! MsgYesNo("Confirma a deleção dos registros?")
             Return
-        EndIf 
+        EndIf
     Else
         If ! MsgYesNo("Confirma a recuperação dos registros deletados?")
             Return
-        EndIf 
-    EndIf 
+        EndIf
+    EndIf
     cFor     := aRet[3]
     cWhile   := aRet[4]
     nProxReg := aRet[5]
@@ -2455,18 +2465,18 @@ Static Function DeleteTab(cAliasDic, np, lDelete)
     If lDelete
         cComando := "DbrLock(), DbDelete(), DbUnlock(), DbCommitall() "
         (cAliasTst)->(TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, "Deletando registos"))
-    Else 
+    Else
         cComando := "DbrLock(), DbRecall(), DbUnlock(), DbCommitall() "
         (cAliasTst)->(TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, "Recuperando registos deletados"))
     EndIf
-   
+
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Refresh()
         __aDicBrw[np]:SetFocus()
         eval(__aDicBrw[np]:bChange)
     EndIf
-    
-Return 
+
+Return
 
 Static Function TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, cTitulo, lMsgFim)
     Local cMsg := ""
@@ -2475,10 +2485,10 @@ Static Function TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, cTitulo, lMs
 
     Default lMsgFim := .t.
     If cComando == NIl
-        cComando := "TIDevMsg()" 
-    Else 
+        cComando := "TIDevMsg()"
+    Else
         cComando += ", TIDevMsg()"
-    EndIf 
+    EndIf
 
     ProcRegua(1)
     Processa({|| TelaEval(cComando, cFor, cWhile, nProxReg, lRest)}, , , .T. )
@@ -2486,10 +2496,10 @@ Static Function TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, cTitulo, lMs
     cMsg += "Total de linhas processadas: " + AllTrim(Str(nQtdRec))
     If lAbortPrint
         cMsg += CRLF + CRLF + " Execução parcial, processamento interrompido!"
-    EndIf 
+    EndIf
     If lMsgFim
         MsgAlert(cMsg)
-    EndIf 
+    EndIf
 
 Return
 
@@ -2499,34 +2509,34 @@ Static Function TIDevMsg()
     ProcessMessage()
     If lAbortPrint
         Break
-    EndiF 
+    EndiF
 
 Return  NIL
 
 
 Static Function TelaEval(cComando, cFor, cWhile, nProxReg, lRest)
     Local lOk    := .T.
-    Local oErro  
+    Local oErro
     Local bBlock := {|| .t. }
-    Local bFor   := NIL 
-    Local bWhile := NIL 
-    
+    Local bFor   := NIL
+    Local bWhile := NIL
+
     __cErroA:= ""
-    oErro := ErrorBlock( { |oErro| ChkErr( oErro ) } ) 
+    oErro := ErrorBlock( { |oErro| ChkErr( oErro ) } )
     Begin Sequence
 
         If cComando != NIL
             bBlock := &("{||"+cValToChar(cComando)+"}")
-        EndIf 
+        EndIf
         If cFor != NIL .and. ! Empty(cFor)
             bFor := &("{||"+cValToChar(cFor)+"}")
-        EndIf 
+        EndIf
         If cWhile != NIl .and. ! Empty(cWhile)
             bWhile := &("{||"+cValToChar(cWhile)+"}")
-        EndIf 
+        EndIf
 
         DBEVAL(bBlock, bFor, bWhile, nProxReg, NIL, lRest)
-    
+
     End Sequence
     ErrorBlock(oErro)
 
@@ -2538,9 +2548,9 @@ Static Function TelaEval(cComando, cFor, cWhile, nProxReg, lRest)
         MostraErro()
         __cErroA :=""
         lOk := .F.
-    EndIf 
+    EndIf
 
-Return lOk 
+Return lOk
 
 
 
@@ -2560,26 +2570,26 @@ Static Function ExportTab(cAliasDic, np)
     Local cDirRmt    := ""
     Local cNomArq    := ""
     Local cArqTmp    := ""
-    Local nx 
+    Local nx
     Local aStruct    := {}
     Local aArea      := {}
-    
+
 
     Private __Export := NIL
 
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
-    
+        Return
+    EndIf
+
 
     aRet := aClone(TelaPar(cAliasTst, "Export"))
     If Empty(aRet)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If ! MsgYesNo("Confirma a exportação dos registros?")
         Return
-    EndIf 
+    EndIf
 
     cFor     := aRet[3]
     cWhile   := aRet[4]
@@ -2592,24 +2602,24 @@ Static Function ExportTab(cAliasDic, np)
     If ! cFormato == "Tabela"
         cDirTmp   := "\TIDBF\"
         cNomTmp   := "TMP" + FWTimeStamp() + "." + cFormato
-        nx := Rat("\", cArquivo) 
+        nx := Rat("\", cArquivo)
         If nx > 0
             cDirRmt := Left(cArquivo, nx)
             cNomArq := Subs(cArquivo, nx + 1)
         Else
             cDirRmt := ""
             cNomArq := cArquivo
-        EndIf 
+        EndIf
         // Trata os caminho e nome de arquivo no Server
         If ! ExistDir(cDirTmp)
             MakeDir(cDirTmp)
-        EndIf 
+        EndIf
 
         cArqTmp  := cDirTmp + cNomTmp
         If File(cArqTmp)
             FErase(cArqTmp)
-        EndIf 
-    EndIf 
+        EndIf
+    EndIf
 
     aStruct := (cAliasTst)->(DbStruct())
     cAliasTmp := "TITMPNEW"
@@ -2641,9 +2651,9 @@ Static Function ExportTab(cAliasDic, np)
 
     ElseIf Left(cFormato, 3) == "XLS"
         __Export:= TIDBF():New(cArqTmp)
-        
+
         If ! __Export:Create(aStruct)
-            Return 
+            Return
         Endif
         If !__Export:Open(.T.,.T.)
             Return .F.
@@ -2651,7 +2661,7 @@ Static Function ExportTab(cAliasDic, np)
         cComando := "LinExel() "
 
     EndIf
-    
+
     (cAliasTst)->(TelaDbEval(cComando, cFor, cWhile, nProxReg, lRest, "Exportanto registos"))
 
     If cFormato == "Tabela"
@@ -2677,18 +2687,18 @@ Static Function ExportTab(cAliasDic, np)
                 MsgAlert("Não foi possivel renomear o arquivo " + cDirRmt + cNomTmp )
             Else
                 MsgAlert("Export concluido em " + cArquivo)
-                If cFormato != "DTC" 
+                If cFormato != "DTC"
                     ShellExecute("open", cArquivo, "", "", 1)
-                EndIf 
-            EndIf 
+                EndIf
+            EndIf
         Else // se o destino for no server
             If FRename(cArqTmp,  cArquivo) = -1
                 MsgAlert("Não foi possivel renomear o arquivo " + cDirRmt + cNomTmp )
-            Else 
+            Else
                 MsgAlert("Export concluido em " + cArquivo)
-            EndIf 
-        EndIf 
-    EndIf 
+            EndIf
+        EndIf
+    EndIf
 
     If ValType(__aDicBrw[np])=='O'
         __aDicBrw[np]:Refresh()
@@ -2698,7 +2708,7 @@ Static Function ExportTab(cAliasDic, np)
 
     RestArea(aArea)
 
-Return     
+Return
 
 Static Function ImportTab(cAliasDic, np)
     Local cAliasTst  := __aDicTst[np]
@@ -2712,24 +2722,24 @@ Static Function ImportTab(cAliasDic, np)
 
 
     If Select(cAliasTst) == 0 .or. Empty(cAliasDic)
-        Return 
-    EndIf 
-    If __lReadOnly 
+        Return
+    EndIf
+    If __lReadOnly
         MsgAlert("Somente leitura!!")
-        Return 
-    EndIf 
+        Return
+    EndIf
     aRet := aClone(TelaImp())
     If Empty(aRet)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If ! MsgYesNo("Confirma a importação dos registros?")
         Return
-    EndIf 
+    EndIf
 
     cFormato := aRet[1]
     cArquivo := aRet[2]
- 
+
     If Select(cAliasTmp) > 0
         (cAliasTmp)->(DbCloseArea())
     EndIf
@@ -2743,9 +2753,9 @@ Static Function ImportTab(cAliasDic, np)
 	    EndIf
         Processa({|| PrcImpTab(cAliasTst, cAliasTmp)}, "Importando ....","Aguarde", .t.)
 
-        (cAliasTmp)->(DbCloseArea())        
+        (cAliasTmp)->(DbCloseArea())
     ElseIf cFormato == "DTC"
-        DbUseArea(.T.,"DBFCDX", cArquivo, cAliasTmp, .T.,.F.) 
+        DbUseArea(.T.,"DBFCDX", cArquivo, cAliasTmp, .T.,.F.)
         If NetErr()
 		    MsgAlert("Erro de abertura de arqvivo")
             RestArea(aArea)
@@ -2756,17 +2766,17 @@ Static Function ImportTab(cAliasDic, np)
         (cAliasTmp)->(DbCloseArea())
         If Left(cArquivo, 13) == "system\tidev\"
             FErase(cArquivo)
-        EndIf 
+        EndIf
     ElseIf cFormato == "CSV"
 
         FT_FUse(cArquivo)
-        
+
         Processa({|| PrcImpCSV(cAliasTst)}, "Importando ....","Aguarde", .t.)
 
         FT_FUSE()
         If Left(cArquivo, 13) == "system\tidev\"
             FErase(cArquivo)
-        EndIf 
+        EndIf
 
     ElseIf Left(cFormato, 3) == "XLS"
         oDBF := TIDBF():New(cArquivo)
@@ -2788,23 +2798,23 @@ Static Function ImportTab(cAliasDic, np)
         eval(__aDicBrw[np]:bChange)
     EndIf
     RestArea(aArea)
-Return 
+Return
 
 
 Static Function TelaImp()
     Local oFontB    := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
-    Local oDlg 
-    Local oPE 
+    Local oDlg
+    Local oPE
     Local oPI
     Local lOk       := .F.
 
-    Local oFormato   
+    Local oFormato
     Local aFormato  := {"Tabela", "DTC", "CSV", "XLS (DBF4)"}
     Local cFormato  := "Tabela"
     Local cArquivo  := Space(200)
-    Local oArquivo   
-    
-    
+    Local oArquivo
+
+
     DEFINE MSDIALOG oDlg FROM	0, 0 TO 100, 600  TITLE "Import" PIXEL
         oPE:= TPanelCss():New(,,, oDlg)
         oPE:SetCoors(TRect():New(0, 0, 75, 500))
@@ -2812,8 +2822,8 @@ Static Function TelaImp()
 
             @ 005, 005 SAY "Formato"  of oPE SIZE 050, 10 PIXEL FONT oFontB
             @ 005, 065 SAY "Arquivo"  of oPE SIZE 050, 10 PIXEL FONT oFontB
-            
-            @ 015, 005 MSCOMBOBOX oFormato  VAR cFormato ITEMS aFormato   SIZE 50,09 PIXEL OF oPE  VALID (cArquivo :=Space(20), If(cFormato=="Tabela", oBGF:Hide(),oBGF:Show()  ) , .t.) 
+
+            @ 015, 005 MSCOMBOBOX oFormato  VAR cFormato ITEMS aFormato   SIZE 50,09 PIXEL OF oPE  VALID (cArquivo :=Space(20), If(cFormato=="Tabela", oBGF:Hide(),oBGF:Show()  ) , .t.)
             @ 015, 065 Get        oArquivo  VAR cArquivo of oPE SIZE 200, 09 PIXEL PICT "@!" WHEN oFormato:nAt == 1 VALID VldArq(@cArquivo)
             oBGF := THButton():New(015, 267, "..."        , oPE, {|| SelArquivo(cFormato, @cArquivo, "I"),  oDlg:cCaption := "Import de " + RetFileName(cArquivo) + "." + cFormato }, 10, 10, oFontB, "Informa o arquivo")
             oBGF:Hide()
@@ -2821,57 +2831,57 @@ Static Function TelaImp()
         oPI:= TPanelCss():New(,,, oDlg)
         oPI:SetCoors(TRect():New(0, 0, 30, 500))
         oPI:Align :=CONTROL_ALIGN_BOTTOM
-            THButton():New(003, 005, "Ok"      ,oPI, {|| If(!Empty(cArquivo) , (lOk:= .T., oDlg:End()), .F.)}, 20, 10, oFontB, "Confirma os parâmetros?") 
-            THButton():New(003, 030, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!") 
+            THButton():New(003, 005, "Ok"      ,oPI, {|| If(!Empty(cArquivo) , (lOk:= .T., oDlg:End()), .F.)}, 20, 10, oFontB, "Confirma os parâmetros?")
+            THButton():New(003, 030, "Cancela" ,oPI, {|| lOk:= .F., oDlg:End() }, 30, 10, oFontB, "Fecha a tela!")
 
     ACTIVATE MSDIALOG oDlg CENTERED
 
     If ! lOk
         Return {}
-    EndIf 
+    EndIf
 
     cArquivo := Alltrim(cArquivo)
 
-Return {cFormato, cArquivo} 
+Return {cFormato, cArquivo}
 
 Static Function VldArq(cArquivo)
     cArquivo := Alltrim(cArquivo)
     If Empty(cArquivo)
         MsgAlert("Arquivo não informado!")
         cArquivo  := Space(200)
-        Return .F. 
-    EndIf   
+        Return .F.
+    EndIf
 
     If ! MsFile(cArquivo,, "TOPCONN")
         MsgAlert("Arquivo " + cArquivo + " não existe no banco!")
         cArquivo  := Space(200)
-        Return .F. 
-    EndIf     
+        Return .F.
+    EndIf
 Return .T.
 
 Static Function PrcImpTab(cAliasTst, cAliasTmp )
     Local aStru    := (cAliasTst)->(DbStruct())
     Local nFields  := Len(aStru)
     Local aStruTmp := (cAliasTmp)->(DbStruct())
-    Local nX 
+    Local nX
     Local cCampo   := ""
     Local nQtdRec  := 0
     Local cMsg     := ""
     Local nPos     := 0
-    
+
 
     For nx:= 1 to len(aStru)
         cCampo := aStru[nx, 1]
         nPos := Ascan(aStruTmp, {|x| Upper(x[1]) == Upper(cCampo) })
         If nPos > 0
-            Exit 
-        EndIf 
-    Next 
+            Exit
+        EndIf
+    Next
 
-    If nPos == 0 
+    If nPos == 0
         MsgAler("Tabela de origem sem nenhum campo correspondente na tabela de destino!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     ProcRegua(1)
 
@@ -2883,15 +2893,15 @@ Static Function PrcImpTab(cAliasTst, cAliasTmp )
         ProcessMessage()
         If lAbortPrint
             Exit
-        EndiF 
-    
+        EndiF
+
         (cAliasTst)->(RecLock(cAliasTst, .T.))
         For nx:= 1 to nFields
             cCampo := aStru[nx, 1]
             nPos := Ascan(aStruTmp, {|x| Alltrim(Upper(x[1])) == Alltrim(Upper(cCampo)) })
             If Empty(nPos)
-                Loop 
-            EndIf 
+                Loop
+            EndIf
 
             (cAliasTst)->(FieldPut(nx, (cAliasTmp)->(FieldGet(nPos))))
         Next
@@ -2900,13 +2910,13 @@ Static Function PrcImpTab(cAliasTst, cAliasTmp )
 
         (cAliasTmp)->(DbSkip())
     End
-    
+
     cMsg += "Total de linhas processadas: " + AllTrim(Str(nQtdRec))
     If lAbortPrint
         cMsg += CRLF + CRLF + " Execução parcial, processamento interrompido!"
-    EndIf 
+    EndIf
     MsgAlert(cMsg)
-    
+
 
 Return
 
@@ -2915,7 +2925,7 @@ Static Function PrcImpCSV(cAliasTst)
     Local nFields  := Len(aStru)
     Local aCabCSV  := {}
     Local cLinha   := ""
-    Local nX 
+    Local nX
     Local cCampo   := ""
     Local cTipo    := ""
     Local nTam     := 0
@@ -2925,27 +2935,27 @@ Static Function PrcImpCSV(cAliasTst)
     Local cMsg     := ""
     Local cSep     := ";"
     Local nPos     := 0
-    
+
     cLinha  :=FT_FREADLN()
-    aCabCSV := separa(cLinha, cSep) 
+    aCabCSV := separa(cLinha, cSep)
 
     For nx:= 1 to len(aStru)
         cCampo := aStru[nx, 1]
         nPos := Ascan(aCabCSV, {|x| Upper(x) == Upper(cCampo) })
         If nPos > 0
-            Exit 
-        EndIf 
-    Next 
+            Exit
+        EndIf
+    Next
 
     FT_FSkip()
 
-    If nPos == 0 
+    If nPos == 0
         MsgAler("Tabela de origem sem nenhum campo correspondente na tabela de destino!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     ProcRegua(1)
-    
+
     While ! FT_FEof()
 
         nQtdRec++
@@ -2953,11 +2963,11 @@ Static Function PrcImpCSV(cAliasTst)
         ProcessMessage()
         If lAbortPrint
             Exit
-        EndiF 
+        EndiF
 
         cLinha   :=FT_FREADLN()
         aItemCSV := separa(cLinha, cSep)
-    
+
         (cAliasTst)->(RecLock(cAliasTst, .T.))
         For nx:= 1 to nFields
             cCampo := aStru[nx, 1]
@@ -2967,8 +2977,8 @@ Static Function PrcImpCSV(cAliasTst)
 
             nPos  := ascan(aCabCSV, { |x|  Alltrim(Upper(x)) == Alltrim(Upper(aStru[nx, 1])) })
             If Empty(nPos)
-                Loop 
-            EndIf 
+                Loop
+            EndIf
             uVar := Alltrim(aItemCSV[nPos])
             If cTipo == "C"
                 uVar := Padr(uVar, nTam)
@@ -2980,8 +2990,8 @@ Static Function PrcImpCSV(cAliasTst)
             ElseIf cTipo == "M"
                 uVAr :=uVar
             ElseIf cTipo == "L"
-                uVar :=  "T" $ Upper(uVar) 
-            EndIf 
+                uVar :=  "T" $ Upper(uVar)
+            EndIf
 
             (cAliasTst)->(FieldPut(nx, uVar))
         Next
@@ -2990,13 +3000,13 @@ Static Function PrcImpCSV(cAliasTst)
 
         FT_FSkip()
     End
-    
+
     cMsg += "Total de linhas processadas: " + AllTrim(Str(nQtdRec))
     If lAbortPrint
         cMsg += CRLF + CRLF + " Execução parcial, processamento interrompido!"
-    EndIf 
+    EndIf
     MsgAlert(cMsg)
-    
+
 
 Return
 
@@ -3004,26 +3014,26 @@ Static Function PrcImpXLS(cAliasTst, oDBF)
     Local aStru    := (cAliasTst)->(DbStruct())
     Local nFields  := Len(aStru)
     Local aStruTmp := oDBF:GetStruct()
-    Local nX 
+    Local nX
     Local cCampo   := ""
     Local nQtdRec  := 0
     Local cMsg     := ""
     Local nPos     := 0
     Local uVAr
-    
+
 
     For nx:= 1 to len(aStru)
         cCampo := aStru[nx, 1]
         nPos := Ascan(aStruTmp, {|x| Upper(x[1]) == Upper(cCampo) })
         If nPos > 0
-            Exit 
-        EndIf 
-    Next 
+            Exit
+        EndIf
+    Next
 
-    If Empty(nPos) 
+    If Empty(nPos)
         MsgAler("Tabela de origem sem nenhum campo correspondente na tabela de destino!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     ProcRegua(1)
 
@@ -3035,8 +3045,8 @@ Static Function PrcImpXLS(cAliasTst, oDBF)
         ProcessMessage()
         If lAbortPrint
             Exit
-        EndiF 
-    
+        EndiF
+
         (cAliasTst)->(RecLock(cAliasTst, .T.))
         For nx:= 1 to nFields
 
@@ -3053,50 +3063,50 @@ Static Function PrcImpXLS(cAliasTst, oDBF)
 
         oDBF:Skip()
     End
-    
+
     cMsg += "Total de linhas processadas: " + AllTrim(Str(nQtdRec))
     If lAbortPrint
         cMsg += CRLF + CRLF + " Execução parcial, processamento interrompido!"
-    EndIf 
+    EndIf
     MsgAlert(cMsg)
-    
 
-Return 
+
+Return
 
 
 Static Function AtuMsg(oBrow, oMsg)
     Local cMsg := ""
 
-    If Eof() 
+    If Eof()
         If Bof()
             cMsg := "Arquivo vazio"
             If ! Empty(dbFilter())
-                cMsg += " | Filter: " + dbFilter()     
-            EndIf 
-        Else 
+                cMsg += " | Filter: " + dbFilter()
+            EndIf
+        Else
             cMsg := "EOF"
-        EndIf 
-    Else 
+        EndIf
+    Else
         cMsg := "Recno: " + Transform(Recno(), "@E 999,999,999" )
-        cMsg += " | RecCount: " + Transform(RecCount(), "@E 999,999,999" ) 
-        cMsg += " | Index[" + AllTrim(Str(IndexOrd())) + "]: " + IndexKey() 
-        cMsg += " | Filter: " + dbFilter() 
+        cMsg += " | RecCount: " + Transform(RecCount(), "@E 999,999,999" )
+        cMsg += " | Index[" + AllTrim(Str(IndexOrd())) + "]: " + IndexKey()
+        cMsg += " | Filter: " + dbFilter()
         If Deleted()
             cMsg += " | Deletado "
-        EndIf 
-    EndIf 
+        EndIf
+    EndIf
     oMsg:SetText(cMsg)
     oMsg:Refresh()
     oBrow:CallRefresh()
     //ProcessMessage()
 
-Return 
+Return
 
 //oMSBrGetDBase:callRefresh()
 
 
 Static Function DelOn(np)
-    
+
     If __lDeleOn
         Set(11,"on")
         oMsgIt3:SetText("Dele On")
@@ -3123,33 +3133,33 @@ Static Function DelRecno(nP, lConfirm)
         Return
     EndIf
 
-    /*If __lDeleOn 
+    /*If __lDeleOn
         MsgAlert("Para deletar desative o Dele On!")
-        Return 
+        Return
     EndIf
     */
-    If __lReadOnly 
+    If __lReadOnly
         MsgAlert("Somente leitura!!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
 
-    If lConFirm 
+    If lConFirm
         If (cAliasTst)->(Deleted())
-            If ! MsgYesNo("Recuperar registro?", "Confirma") 
+            If ! MsgYesNo("Recuperar registro?", "Confirma")
                 Return
             EndIf
         Else
-            If ! MsgYesNo("Deletar registro?", "Confirma") 
+            If ! MsgYesNo("Deletar registro?", "Confirma")
                 Return
             EndIf
-        EndIf 
+        EndIf
     EndIf
 
     If IsLocked(cAliasTst)
         MsgInfo("Registro com lock!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     (cAliasTst)->(DbRlock())
     If (cAliasTst)->(Deleted())
@@ -3165,18 +3175,18 @@ Static Function DelRecno(nP, lConfirm)
         __aDicBrw[np]:SetFocus()
         eval(__aDicBrw[np]:bChange)
     EndIf
-  
+
 Return
 
 Static Function AddRecno(nP)
     Local cAliasTst := __aDicTst[np]
-    
-    If __lReadOnly 
-        MsgAlert("Somente leitura!!")
-        Return 
-    EndIf 
 
-    If ! MsgYesNo("Adicionar registro?", "Confirma") 
+    If __lReadOnly
+        MsgAlert("Somente leitura!!")
+        Return
+    EndIf
+
+    If ! MsgYesNo("Adicionar registro?", "Confirma")
         Return
     EndIf
 
@@ -3184,7 +3194,7 @@ Static Function AddRecno(nP)
     (cAliasTst)->(DbUnlock())
     (cAliasTst)->(DbCommitAll())
 
-Return     
+Return
 
 Static Function AltReg(oBrowse, cAliasTst, lQuery)
     Local oDlg
@@ -3192,8 +3202,8 @@ Static Function AltReg(oBrowse, cAliasTst, lQuery)
     Local oGet
     Local oBtn
     Local cMacro	:= ''
-    Local nRow      := oBrowse:nAt 
-    Local oOwner    := oBrowse:oWnd 
+    Local nRow      := oBrowse:nAt
+    Local oOwner    := oBrowse:oWnd
     Local nLastKey
     Local cTipo
     Local cPict		:= ''
@@ -3206,31 +3216,31 @@ Static Function AltReg(oBrowse, cAliasTst, lQuery)
     Local oFont     := oOwner:oFont
     Local nClrFore
     Default lQuery := .F.
-     
-    
+
+
     If ! lQuery .AND. IsLocked(cAliasTst)
         MsgInfo("Registro com lock!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If __lReadOnly .or. lQuery
         lLeitura := .t.
         nClrFore := Rgb(255,0,0)
-    EndIf 
-    
+    EndIf
+
     If !  lLeitura
         (cAliasTst)->(DbRlock())
-    EndIf 
+    EndIf
 
-    oRect	 := tRect():New(0,0,0,0)        
-    oBrowse:GetCellRect(nCol,,oRect)  
+    oRect	 := tRect():New(0,0,0,0)
+    oBrowse:GetCellRect(nCol,,oRect)
     aDim  	 := {oRect:nTop, oRect:nLeft, oRect:nBottom, oRect:nRight}
 
     aStruct  := (cAliasTst)->(dbStruct())
     cField   := aStruct[nCol, 1]
     cTipo := aStruct[nCol, 2]
-    If cTipo == "N" 
-        If aStruct[nCol, 4] > 0 
+    If cTipo == "N"
+        If aStruct[nCol, 4] > 0
             cPict := Replicate("9", aStruct[nCol, 3] - (aStruct[nCol, 4] + 1)) + "." + Replicate("9", aStruct[nCol, 4])
         Else
             cPict := Replicate("9", aStruct[nCol, 3])
@@ -3249,7 +3259,7 @@ Static Function AltReg(oBrowse, cAliasTst, lQuery)
             oGet:Move(-2,-2, (aDim[ 4 ] - aDim[ 2 ]) + 4, 062  )
             oGet:cReadVar  := cMacro
             oGet:align := CONTROL_ALIGN_ALLCLIENT
-            
+
             @ 0, 0 BUTTON oBtn PROMPT "QQ" SIZE 0,0 OF oDlg
             oBtn:bGotFocus := {|| oDlg:nLastKey := VK_RETURN, oDlg:End()}
         ACTIVATE MSDIALOG oDlg CENTERED  VALID ( nLastKey := oDlg:nLastKey, .T. )
@@ -3257,7 +3267,7 @@ Static Function AltReg(oBrowse, cAliasTst, lQuery)
 
     Else
         DEFINE MSDIALOG oDlg OF oOwner  FROM 000,000 TO 000,000 STYLE nOR( WS_VISIBLE, WS_POPUP ) PIXEL
-            If cTipo == 'L' 
+            If cTipo == 'L'
                 cCbx := If(&(cMacro), '.T.', '.F.')
                 oGet := TComboBox():New(0, 0, bSetGet(cCbx),aItems, 10, 10, oDlg,, {|| If(cCbx == '.T.', &(cMacro) := .T., &(cMacro) := .F.), oDlg:End(), nLastKey := 13},,,,.T., oFont)
                 oGet:Move(-2, -2, (aDim[4] - aDim[2]) + 4, aDim[3] - aDim[1] + 4)
@@ -3266,13 +3276,13 @@ Static Function AltReg(oBrowse, cAliasTst, lQuery)
                 oGet:Move(-2,-2, (aDim[4] - aDim[2]) + 4, aDim[3] - aDim[1] + 4 )
                 oGet:cReadVar  := cMacro
             EndIf
-            
+
             @ 0, 0 BUTTON oBtn PROMPT "QQ" SIZE 0,0 OF oDlg
             oBtn:bGotFocus := {|| oDlg:nLastKey := VK_RETURN, oDlg:End()}
         ACTIVATE MSDIALOG oDlg ON INIT oDlg:Move(aDim[1], aDim[2],aDim[4] - aDim[2], aDim[3] - aDim[1])  VALID ( nLastKey := oDlg:nLastKey, .T. )
 
-    EndIf 
-    
+    EndIf
+
     If ! lLeitura
         If ( nLastKey <> 0 )
             (cAliasTst)->(FieldPut(FieldPos(cField), (&cMacro)))
@@ -3281,7 +3291,7 @@ Static Function AltReg(oBrowse, cAliasTst, lQuery)
         EndIf
         (cAliasTst)->(DbUnLock())
         (cAliasTst)->(DbCommit())
-    EndIf 
+    EndIf
     oBrowse:Refresh()
 Return
 
@@ -3299,25 +3309,25 @@ Static Function Estrutura(cAliasDic, np)
 
     If Empty(cAliasDic)
         MsgAlert("Alias não informado!!!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     aStruct := (cAliasTst)->(DbStruct())
 
-    DEFINE MSDIALOG oDlg FROM 010,010 TO 400,335 TITLE "Estrutura: " + cAliasDic + " com " + Alltrim(Str(Len(aStruct))) + " campos"  PIXEL 
-        
+    DEFINE MSDIALOG oDlg FROM 010,010 TO 400,335 TITLE "Estrutura: " + cAliasDic + " com " + Alltrim(Str(Len(aStruct))) + " campos"  PIXEL
+
         oP1:= TPanelCss():New(,,, oDlg)
         oP1:SetCoors(TRect():New(0, 0, 38, 100))
         oP1:Align :=CONTROL_ALIGN_TOP
 
         @ 007, 002 SAY "Ordem "   of oP1 SIZE 020, 10 PIXEL
-        @ 005, 022 MSCOMBOBOX oOrdem    VAR cOrdem    ITEMS aOrdem   SIZE 40, 09 PIXEL OF oP1 VALID OrdemEstru(cOrdem, oLbx, aStruct, np) 
+        @ 005, 022 MSCOMBOBOX oOrdem    VAR cOrdem    ITEMS aOrdem   SIZE 40, 09 PIXEL OF oP1 VALID OrdemEstru(cOrdem, oLbx, aStruct, np)
 
         @ 007, 082 SAY "Busca"    of oP1 SIZE 020, 10 PIXEL
-        @ 005, 102 GET cPesquisa  of oP1 SIZE 040, 09 PIXEL PICT "@!" VALID BuscaEstru(oLbx, cPesquisa) 
+        @ 005, 102 GET cPesquisa  of oP1 SIZE 040, 09 PIXEL PICT "@!" VALID BuscaEstru(oLbx, cPesquisa)
 
 
-        @ 002, 002 LISTBOX oLbx FIELDS HEADER "Campo", "Tipo", "Tamanho", "Decimal" SIZE 158,095 PIXEL OF oDlg 
+        @ 002, 002 LISTBOX oLbx FIELDS HEADER "Campo", "Tipo", "Tamanho", "Decimal" SIZE 158,095 PIXEL OF oDlg
         oLbx:Align :=CONTROL_ALIGN_ALLCLIENT
         oLbx:SetArray( aStruct )
         oLbx:bLine := {|| Retbline(oLbx, aStruct ) }
@@ -3325,32 +3335,32 @@ Static Function Estrutura(cAliasDic, np)
 
     ACTIVATE MSDIALOG oDlg CENTERED
 
-Return 
+Return
 
-Static Function OrdemEstru(cOrdem, oLbx, aStruct, np) 
+Static Function OrdemEstru(cOrdem, oLbx, aStruct, np)
     Local cAliasTst := __aDicTst[np]
-    
+
     If cOrdem == "Natural"
         aStruct := (cAliasTst)->(DbStruct())
-    Else 
+    Else
         aSort(aStruct,,, { |x,y| x[1] < y[1] })
-    EndIf 
-    
+    EndIf
+
     oLbx:SetArray( aStruct )
     oLbx:bLine := {|| Retbline(oLbx, aStruct ) }
     oLbx:Refresh()
     oLbx:SetFocus()
 
-Return 
+Return
 
-Static Function BuscaEstru(oLbx, cPesquisa) 
+Static Function BuscaEstru(oLbx, cPesquisa)
     Local np := 0
     Local nL := len(Alltrim(cPesquisa))
 
     np := Ascan(oLbx:aArray, {|x| Left(x[1], nL) == Alltrim(cPesquisa) })
     If Empty(np)
-        Return  
-    EndIf 
+        Return
+    EndIf
 
     oLbx:nAt := np
     oLbx:Refresh()
@@ -3375,14 +3385,14 @@ Static Function CompSX(cAliasDic, np)
 
     If Empty(cAliasDic)
         Return
-    EndIf 
+    EndIf
 
     If AllTrim(cAliasDic) + "," $ "SIX,SX1,SX2,SX3,SX6,SX7,SXA,SXB,SXE,SXF,SXG,"
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If Upper(Right(cAliasDic, 4)) == ".DTC"
-        Return  
+        Return
     EndIf
 
     cAliasDic := Left(cAliasDic, 3)
@@ -3390,9 +3400,9 @@ Static Function CompSX(cAliasDic, np)
     If ! SX2->(DbSeek(cAliasDic))
         RestArea(aAreaSx2)
         RestArea(aArea)
-        Return 
-    EndIf 
-    
+        Return
+    EndIf
+
     SX3->(dbSetOrder(1))
     If ! SX3->(DbSeek(cAliasDic))
         RestArea(aAreaSx3)
@@ -3488,36 +3498,36 @@ Static Function SincSX3(cAliasDic,  np)
 
     If Empty(cAliasDic)
         Return
-    EndIf 
+    EndIf
 
     If AllTrim(cAliasDic) + "," $ "SIX,SX1,SX2,SX3,SX6,SX7,SXA,SXB,SXE,SXF,SXG,"
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If Upper(Right(cAliasDic, 4)) == ".DTC"
-        Return  
+        Return
     EndIf
 
     If len(Alltrim(cAliasDic)) == 3
         cAliasDic := Left(cAliasDic, 3)
-        SX2->(DbSetOrder(1))    
+        SX2->(DbSetOrder(1))
         If ! SX2->(DbSeek(cAliasDic))
             MsgAlert("Tabela não encontrada no SX2")
-            RestArea(aAreaSx2)  
+            RestArea(aAreaSx2)
             RestArea(aArea)
-            Return 
-        EndIf 
+            Return
+        EndIf
     Else
-        SX2->(DbSetOrder(2))    
+        SX2->(DbSetOrder(2))
         If ! SX2->(DbSeek(Alltrim(cAliasDic)))
             MsgAlert("Tabela não encontrada no SX2")
-            RestArea(aAreaSx2)  
+            RestArea(aAreaSx2)
             RestArea(aArea)
-            Return 
-        EndIf 
+            Return
+        EndIf
         cAliasDic := SX2->X2_CHAVE
-    EndIf 
-    RestArea(aAreaSx2)  
+    EndIf
+    RestArea(aAreaSx2)
     RestArea(aArea)
     If ! MsgYesNo("Confirma o sincronismo entre o SX3 e o banco?")
         return
@@ -3531,7 +3541,7 @@ Static Function SincSX3(cAliasDic,  np)
         __aDicBrw[np]:Hide()
         __aDicBrw[np]:FreeChildren()
         FreeObj(__aDicBrw[np])
-        __aDicBrw[np]:= NIL 
+        __aDicBrw[np]:= NIL
     EndIf
 
 
@@ -3582,37 +3592,37 @@ Static Function DropInd(cAliasDic, np)
 
     If Empty(cAliasDic)
         Return
-    EndIf 
+    EndIf
 
     If AllTrim(cAliasDic) + "," $ "SIX,SX1,SX2,SX3,SX6,SX7,SXA,SXB,SXE,SXF,SXG,"
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If Upper(Right(cAliasDic, 4)) == ".DTC"
-        Return  
+        Return
     EndIf
 
 
     If len(Alltrim(cAliasDic)) == 3
         cAliasDic := Left(cAliasDic, 3)
-        SX2->(DbSetOrder(1))    
+        SX2->(DbSetOrder(1))
         If ! SX2->(DbSeek(cAliasDic))
             MsgAlert("Tabela não encontrada no SX2")
-            RestArea(aAreaSx2)  
+            RestArea(aAreaSx2)
             RestArea(aArea)
-            Return 
-        EndIf 
+            Return
+        EndIf
     Else
-        SX2->(DbSetOrder(2))    
+        SX2->(DbSetOrder(2))
         If ! SX2->(DbSeek(Alltrim(cAliasDic)))
             MsgAlert("Tabela não encontrada no SX2")
-            RestArea(aAreaSx2)  
+            RestArea(aAreaSx2)
             RestArea(aArea)
-            Return 
-        EndIf 
+            Return
+        EndIf
         cAliasDic := SX2->X2_CHAVE
-    EndIf 
-    RestArea(aAreaSx2)  
+    EndIf
+    RestArea(aAreaSx2)
     RestArea(aArea)
     If ! MsgYesNo("Confirma a exclusão de todos os indices da tabela  " + cAliasDic + "?")
         return
@@ -3626,34 +3636,34 @@ Static Function DropInd(cAliasDic, np)
         __aDicBrw[np]:Hide()
         __aDicBrw[np]:FreeChildren()
         FreeObj(__aDicBrw[np])
-        __aDicBrw[np]:= NIL 
+        __aDicBrw[np]:= NIL
     EndIf
 
     cFile := AllTrim(SX2->X2_ARQUIVO)
 
     If ! MsFile(cFile,,"TOPCONN")
         Return "Arquivo não existe!"
-    EndIf    
-    
-    While nOrd <= 36 
+    EndIf
+
+    While nOrd <= 36
         cFileIdx := cFile + RetAsc(Str(nOrd+=1), 1, .T.)
         If TcCanOpen(cFile, cFileIdx)
             Aadd(aDelKeys, cFile+'|'+cFileIdx)
         EndIf
     End
 
-    For ni := 1 To Len(aDelKeys) 
+    For ni := 1 To Len(aDelKeys)
         cMsg += "Apagado o indice: " + aDelKeys[ni] +CRLF
         TcInternal(60, aDelKeys[ni])
     Next
     TcRefresh(cFile)
-    
+
     AutoGrLog("")
     FErase(NomeAutoLog())
     AutoGrLog(cMsg)
     MostraErro()
-    
-Return 
+
+Return
 
 
 
@@ -3663,7 +3673,7 @@ Aba de Inspeção de fontes
 #################################################################################################################################
 */
 
-Static __aFunc := {}   
+Static __aFunc := {}
 Static __aClass:= {}
 
 Static Function FolderRPO(oDlg)
@@ -3674,26 +3684,26 @@ Static Function FolderRPO(oDlg)
 
     Local oTipo
     Local aTipo := {"Fonte", "Função/Classe"}
-    Local cTipo := "Fonte"   
+    Local cTipo := "Fonte"
     Local cChave := Space(100)
 
     Local aCab   := {"Fonte", "Data", "Hora", "Função/Classe", "Linha", "Tipo", "" }
-    Local oLbx   
+    Local oLbx
     Local aLista := {{"","","","","","",""}}
     Local oMemo2
     Local cMemo2 :=""
     Local oFont  := TFont():New("Consolas",, 20,, .F.,,,,, .F. )
     Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
 
-    
+
     oP1 := TPanelCss():New(,,,oDlg)
     oP1 :SetCoors(TRect():New( 0,0, 40, __nWidth))
     oP1 :Align := CONTROL_ALIGN_TOP
 
-    @ 005, 004 MSCOMBOBOX oTipo    VAR cTipo    ITEMS aTipo   SIZE 60,09 PIXEL OF oP1 
+    @ 005, 004 MSCOMBOBOX oTipo    VAR cTipo    ITEMS aTipo   SIZE 60,09 PIXEL OF oP1
     @ 005, 070 Get cChave of oP1 SIZE 200, 08 PIXEL PICT "@!"
-    oBut  := THButton():New(005, 274,"Pesquisar" ,oP1, {|| PesqRpo(cTipo, cChave, aLista, oLbx, @cMemo2) }, 45, 10, oFontB, "Busca o conteudo no RPO conforme o tipo!") 
-        
+    oBut  := THButton():New(005, 274,"Pesquisar" ,oP1, {|| PesqRpo(cTipo, cChave, aLista, oLbx, @cMemo2) }, 45, 10, oFontB, "Busca o conteudo no RPO conforme o tipo!")
+
     oPL:= TPanelCss():New(,,,oDlg)
     oPL:SetCoors(TRect():New( 0,0, __nHeight * 0.4 , __nWidth * 0.5))
     oPL:Align :=CONTROL_ALIGN_ALLCLIENT
@@ -3724,10 +3734,10 @@ Static Function RetbLine(oLbx, aLista)
 Return aclone(aRet)
 
 Static Function PesqRpo(cTipo, cChave, aLista, oLbx, cMemo2)
-  
+
     If Empty(cChave)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     If oLbx == NIL
         Return
@@ -3740,18 +3750,18 @@ Static Function PesqRpo(cTipo, cChave, aLista, oLbx, cMemo2)
         PesqPrg(cChave, aLista)
     Else
         PesqFunc(cChave, aLista)
-    EndIf 
+    EndIf
 
     If Empty(aLista)
         MsgAlert("Não encontrado!")
         aLista := {{"","","","","","",""}}
-    EndIf 
+    EndIf
 
     oLbx:SetArray(aLista)
     oLbx:bLine := {|| Retbline(oLbx, aLista ) }
     oLbx:Refresh()
 
-Return 
+Return
 
 Static Function PesqFunc(cChave, aLista)
     Local aType  := {}
@@ -3775,7 +3785,7 @@ Static Function PesqFunc(cChave, aLista)
     For nx := 1 To Len(aFuns)
         AAdd(aLista, { aFile[nx], aDate[nx], aTime[nx], aFuns[nx], aLine[nx], aType[nx], "" } )
     Next
-    
+
     lComMask := '*'$ cChave
 
     cChave := StrTran(cChave, "*","")
@@ -3788,13 +3798,13 @@ Static Function PesqFunc(cChave, aLista)
         If (np := AScan(__aFunc ,{|x| cChave == Upper(x[1])})) > 0
             AAdd(aLista, { "", "", "", __aFunc[nP, 1], "", "ADVPL" , ""} )
         EndIf
-    
+
         If (np := AScan(__aClass,{|x| cChave == Upper(x[1])})) > 0
             AAdd(aLista, { "", "", "", __aClass[nP, 1], "", "Classe" , ""} )
         EndIf
     EndIf
 
-Return 
+Return
 
 Static Function PesqPrg(cChave, aLista)
     Local aType  := {}
@@ -3804,7 +3814,7 @@ Static Function PesqPrg(cChave, aLista)
     Local aTime  := {}
     Local aFuns  := {}
     Local nx     := 0
- 
+
     cChave := Upper(Alltrim(StrTran(cChave, "*", "")))
 
     If Empty(__aFunc)
@@ -3819,11 +3829,11 @@ Static Function PesqPrg(cChave, aLista)
     For nx := 1 To Len(aFuns)
         If Left(cChave, len(cChave)) == Left(aFile[nx], len(cChave) )
             AAdd(aLista, { aFile[nx], aDate[nx], aTime[nx], aFuns[nx], aLine[nx], aType[nx], "" } )
-        EndIf 
+        EndIf
     Next
- 
 
-Return 
+
+Return
 
 Static Function BuscaPar(aLista, nAt, cMemo2, oMemo2)
     Local cRet    := ""
@@ -3833,7 +3843,7 @@ Static Function BuscaPar(aLista, nAt, cMemo2, oMemo2)
     Local nY := 0
     Local nZ := 0
     Local aRet2   := {}
-    Local cNomeFunc := aLista[nAt, 4] 
+    Local cNomeFunc := aLista[nAt, 4]
     Local lAdvpl    := aLista[nAt, 6] == "ADVPL"
     Local lClasse   := aLista[nAt, 6] == "Classe"
     Local cChamada := cNomeFunc+'('
@@ -3871,7 +3881,7 @@ Static Function BuscaPar(aLista, nAt, cMemo2, oMemo2)
                             cRet := 'cExp' + strZero((nZ + 1) / 2, 2) + ' - caracter'
                         Case Left(cPar, 1) == 'N'
                             cRet := 'nExp' + strZero((nZ + 1) / 2, 2) + ' - numerico'
-                        Case Left(cPar, 1) == 'A' 
+                        Case Left(cPar, 1) == 'A'
                             cRet := 'aExp' + strZero((nZ + 1) / 2, 2) + ' - array'
                         Case Left(cPar, 1) == 'L'
                             cRet := 'lExp' + strZero((nZ + 1) / 2, 2) + ' - logico'
@@ -3983,9 +3993,9 @@ Static Function FolderCmd(oDlg)
     Local oBut
     Local oBut2
     Local oCheck
-    Local lCheck := .T. 
+    Local lCheck := .T.
 
-    Local oP1 
+    Local oP1
     Local oP2
     Local oP3
     Local oP4
@@ -3994,23 +4004,23 @@ Static Function FolderCmd(oDlg)
     Local cMemo1 := ""
     Local oMemo2
     Local cMemo2 := ""
-    Local oMsg 
+    Local oMsg
     Local cMsg   := ""
     Local oFont:= TFont():New("Consolas",, 20,, .F.,,,,, .F. )
     Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
-  
+
     oP1:= TPanelCss():New(,,, oDlg)
     oP1:SetCoors(TRect():New(0, 0, 30, __nWidth))
     oP1:Align :=CONTROL_ALIGN_TOP
 
-        oBut  := THButton():New(002, 002,"Executar" ,oDlg,{|| ExecMacro(cMemo1, @cMemo2, oMsg,  lCheck)}, 45, 10, oFontB, "Executa as linhas com macro") 
-        oBut2 := THButton():New(002, 050,"Histórico",oDlg,{|| MenuCmd(@cMemo1, oBut2)                  }, 45, 10, oFontB, "Lista com o historico") 
-        @ 002, 102 CHECKBOX oCheck VAR lCheck	 PROMPT "Trata Erro"	 SIZE 055,010 OF oP1 PIXEL font oFontB 
-        
+        oBut  := THButton():New(002, 002,"Executar" ,oDlg,{|| ExecMacro(cMemo1, @cMemo2, oMsg,  lCheck)}, 45, 10, oFontB, "Executa as linhas com macro")
+        oBut2 := THButton():New(002, 050,"Histórico",oDlg,{|| MenuCmd(@cMemo1, oBut2)                  }, 45, 10, oFontB, "Lista com o historico")
+        @ 002, 102 CHECKBOX oCheck VAR lCheck	 PROMPT "Trata Erro"	 SIZE 055,010 OF oP1 PIXEL font oFontB
+
     oP2:= TPanelCss():New(,,, oDlg)
     oP2:SetCoors(TRect():New(0, 0, __nHeight * 0.4, __nWidth))
     oP2:Align :=CONTROL_ALIGN_TOP
-        
+
         oMemo1 := tMultiget():new(,, bSETGET(cMemo1), oP2)
         oMemo1:Align := CONTROL_ALIGN_ALLCLIENT
         oMemo1:oFont:=oFont
@@ -4023,17 +4033,17 @@ Static Function FolderCmd(oDlg)
         oMemo2 := tMultiget():new(,, bSETGET(cMemo2), oP3)
         oMemo2:Align := CONTROL_ALIGN_ALLCLIENT
         oMemo2:oFont:=oFont
-        
+
 
     oP4:= TPanelCss():New(,,, oDlg)
     oP4:SetCoors(TRect():New(0, 0, 30, __nWidth))
     oP4:Align :=CONTROL_ALIGN_BOTTOM
         @ 002, 002 SAY oMsg VAR cMsg SIZE 300,010 OF oP4 PIXEL FONT oFont
-        
+
 
 Return
 
-Static Function ExecMacro(cMemo1, cMemo2, oMsg, lCheck) 
+Static Function ExecMacro(cMemo1, cMemo2, oMsg, lCheck)
     Local nX     := 0
     Local xAux   := ""
     Local cRet   := ""
@@ -4049,17 +4059,17 @@ Static Function ExecMacro(cMemo1, cMemo2, oMsg, lCheck)
     If lCheck
         bErroA   := ErrorBlock({ |oErro| ChkErr(oErro)})
     EndIf
-    
+
     oMsg:SetText("")
     oMsg:Refresh()
     ProcessMessage()
     If Empty(cMemo1)
         oMsg:SetText("Linha de comando em branco!!!")
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     GrvHst(__aHstCmd, "cmd", cMemo1)
-    
+
     Begin Sequence
         nSec1 := Seconds()
 
@@ -4101,7 +4111,7 @@ Static Function ExecMacro(cMemo1, cMemo2, oMsg, lCheck)
             cRetM += Valtype(xAux) + ' -> ' + cRet + CRLF
         next
         nSec2 := Seconds()
-        
+
     End Sequence
 
     If lCheck
@@ -4115,10 +4125,10 @@ Static Function ExecMacro(cMemo1, cMemo2, oMsg, lCheck)
         oMsg:SetText("Erro na linha " + AllTrim(Str(nx)))
         __cErroA:= ""
     Else
-        If nSec2 >= nSec1 
+        If nSec2 >= nSec1
             cMsgT := "Tempo de Execução: " + APSec2Time(nSec2 - nSec1) + " (" + Alltrim(Str(nSec2 - nSec1)) + " segs.)"
             oMsg:SetText(cMsgT)
-        EndIf 
+        EndIf
     EndIf
     oMsg:Refresh()
 
@@ -4130,7 +4140,7 @@ Static Function MenuCmd(cCMD, oOwner)
     Local oMenu
     Local cAux    := ''
     Local bBlock  :={||}
-    
+
     LeHst(__aHstCmd, "cmd")
 
     oMenu := tMenu():new(0, 0, 0, 0, .T., , oOwner)
@@ -4156,7 +4166,7 @@ Static Function FolderHtm(oDlg)
     Local oBut
     Local oBut2
 
-    Local oP1 
+    Local oP1
     Local oP2
     Local oP3
 
@@ -4164,7 +4174,7 @@ Static Function FolderHtm(oDlg)
     Local cMemo1 := ""
     Local oSbr
     Local oEdit
-       
+
     Local oFont:= TFont():New("Consolas",, 20,, .F.,,,,, .F. )
     Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
 
@@ -4172,13 +4182,13 @@ Static Function FolderHtm(oDlg)
     oP1:SetCoors(TRect():New(0, 0, 30, __nWidth))
     oP1:Align :=CONTROL_ALIGN_TOP
 
-        oBut  := THButton():New(002, 002,"Executar" ,oDlg,{|| ExecHtml(cMemo1, oEdit ) }, 45, 10, oFontB, "Interpreta as linhas codigos Html") 
-        oBut2 := THButton():New(002, 050,"Histórico",oDlg,{|| MenuHtm(@cMemo1, oBut2)  }, 45, 10, oFontB, "Lista com o histórico") 
-        
+        oBut  := THButton():New(002, 002,"Executar" ,oDlg,{|| ExecHtml(cMemo1, oEdit ) }, 45, 10, oFontB, "Interpreta as linhas codigos Html")
+        oBut2 := THButton():New(002, 050,"Histórico",oDlg,{|| MenuHtm(@cMemo1, oBut2)  }, 45, 10, oFontB, "Lista com o histórico")
+
     oP2:= TPanelCss():New(,,, oDlg)
     oP2:SetCoors(TRect():New(0, 0, __nHeight * 0.4, __nWidth))
     oP2:Align :=CONTROL_ALIGN_TOP
-        
+
         oMemo1 := tMultiget():new(,, bSETGET(cMemo1), oP2)
         oMemo1:Align := CONTROL_ALIGN_ALLCLIENT
         oMemo1:oFont:=oFont
@@ -4199,8 +4209,8 @@ Return
 Static Function ExecHtml(cMemo1, oEdit)
 
     If Empty(cMemo1)
-        Return 
-    EndIf 
+        Return
+    EndIf
 
     GrvHst(__aHstHtm, "htm", cMemo1)
 
@@ -4214,7 +4224,7 @@ Static Function MenuHtm(cCMD, oOwner)
     Local oMenu
     Local cAux    := ''
     Local bBlock  :={||}
-    
+
     LeHst(__aHstHtm, "htm")
 
     oMenu := tMenu():new(0, 0, 0, 0, .T., , oOwner)
@@ -4235,7 +4245,7 @@ Return
 Aba de execução de Script HTML
 #################################################################################################################################
 */
-    
+
 
 
 
@@ -4291,7 +4301,7 @@ Static Function FolderExp(oDlg)
     @ nLin    , nCol + nS1 - 32 BITMAP oBmp02 NAME "LUPA"   SIZE 015, 015 OF oPnlFExp PIXEL NOBORDER ON CLICK (FAtualiz(cSearch02, oList02, 2))
 
     @ nLin+=12, nCol LISTBOX oList02 FIELDS HEADER " ","File Name","File Size","File Date","File Hour" SIZE nS1 -15,nHm-49 OF oPnlFExp PIXEL COLSIZES 05, 185, 35, 30, 30 ;
-        ON DBLCLICK LeDirect(oList02 , oGet2, @cPath02, .T.) 
+        ON DBLCLICK LeDirect(oList02 , oGet2, @cPath02, .T.)
 
     nLin := nHm - 20
 
@@ -4464,7 +4474,7 @@ Return
 Aba MONITOR
 #################################################################################################################################
 */
-    
+
 
 Static Function FolderMon(oFolder, oDlg)
     Local oPS
@@ -4505,8 +4515,8 @@ Static Function FolderMon(oFolder, oDlg)
 
     @ 06,235 SAY "Porta"   of oPS SIZE 030,09 PIXEL
     @ 03,252 GET nPortaTcp  of oPS SIZE 040,09 PIXEL PICTURE "99999"
-    
-    oBut  := THButton():New(004, 300, 'Finalizar todas'   , oPS, {|| DellAll( aLista, cEnvServer, cServerIP, nPortaTcp)   }, 60, 10, oFontB, "Finaliza todas a threads") 
+
+    oBut  := THButton():New(004, 300, 'Finalizar todas'   , oPS, {|| DellAll( aLista, cEnvServer, cServerIP, nPortaTcp)   }, 60, 10, oFontB, "Finaliza todas a threads")
 
     oPnlSrv := TPanelCss():New(,,,oFolder)
     oPnlSrv :SetCoors(TRect():New( 0,0, 400, 400))
@@ -4525,7 +4535,7 @@ Static Function FolderMon(oFolder, oDlg)
 Return
 
 
-    
+
 Static Function SrvInfoUser(cServerIP, nPortaTcp, cEnvServer)
     Local nTimeOut  := 10
     Local oServer
@@ -4549,7 +4559,7 @@ Static Function SrvInfoUser(cServerIP, nPortaTcp, cEnvServer)
         FreeObj(oServer)
         Return {}
     EndIf
-    
+
     aSize(aInfoThr, 0)
     __cErroP := ""
     bErroA   := ErrorBlock( { |oErro| ChkErrP( oErro ) } )
@@ -4634,19 +4644,19 @@ Return
 Static Function PegaIP()
     Local cIP := ""
     Local aIP := GetServerIP(.T.)  // aqui retorna um array com os ips da maquina
-    Local nx  
-    
+    Local nx
+
     For nx := 1 to Len(aIP)
-        If Left(aIP[nx, 4], 3) == "172"	
+        If Left(aIP[nx, 4], 3) == "172"
             cIP := aIP[nx, 4]
         EndIf
     Next
     If Empty(cIP)
         cIP := GetServerIP(.F.)  // retorna o ip da conexão
-    EndIf 
+    EndIf
     If Empty(cIP)
         cIP := "172.0.0.1"  // Localhost
-    EndIf 
+    EndIf
 
 Return cIP
 
@@ -4734,15 +4744,15 @@ Static Function FolderServ(oFolder)
 
     Local aLista := {{"","",""}}
     Local aCab   := {"Nome", "Status" , "Descrição"}
-    Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)    
+    Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
 
     oPS := TPanelCss():New(,,,oFolder)
     oPS :SetCoors(TRect():New( 0,0, 30, 30))
     oPS :Align := CONTROL_ALIGN_TOP
 
-    oBut  := THButton():New(002, 002, 'Atualiza' , oPS, {|| Processa({|| LeServico(oLbx)  }, "Carregando servicos", "Aguarde....", .T.)   }, 45, 10, oFontB, "Atualiza a listas de serviços") 
+    oBut  := THButton():New(002, 002, 'Atualiza' , oPS, {|| Processa({|| LeServico(oLbx)  }, "Carregando servicos", "Aguarde....", .T.)   }, 45, 10, oFontB, "Atualiza a listas de serviços")
 
-    
+
     oPnlSrv := TPanelCss():New(,,,oFolder)
     oPnlSrv :SetCoors(TRect():New( 0,0, 400, 400))
     oPnlSrv :Align :=CONTROL_ALIGN_ALLCLIENT
@@ -4884,16 +4894,16 @@ Static Function FolderErro(oFolder)
     Local oLstErro
     Local nR := __nWidth
     Local nB := __nHeight
-    Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)    
+    Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
 
 
     oPS := TPanelCss():New(,,,oFolder)
     oPS :SetCoors(TRect():New( 0,0, 30, 30))
     oPS :Align := CONTROL_ALIGN_TOP
 
-    THButton():New(002, 002, 'Ultimo'  , oPS, {|| oLstErro := LeErro(aLstErro, oLbxLista, @cMemoErro, .T., .F.), Eval(oLbxLista:bChange)  }, 45, 10, oFontB, "Carrega o ultimo erro do erro.log") 
-    THButton():New(002, 052, 'Todos'   , oPS, {|| Processa({|| oLstErro := LeErro(aLstErro, oLbxLista, @cMemoErro, .F., .F.), Eval(oLbxLista:bChange) }, "Carregando error.log", "Aguarde....", .T.)  }, 45, 10, oFontB, "Carrega os erros do error.log") 
-    THButton():New(002, 102, 'Arquivo' , oPS, {|| Processa({|| oLstErro := LeErro(aLstErro, oLbxLista, @cMemoErro, .F., .T.), Eval(oLbxLista:bChange) }, "Carregando error.log", "Aguarde....", .T.)  }, 45, 10, oFontB, "Carrega os erros um arquivo informado") 
+    THButton():New(002, 002, 'Ultimo'  , oPS, {|| oLstErro := LeErro(aLstErro, oLbxLista, @cMemoErro, .T., .F.), Eval(oLbxLista:bChange)  }, 45, 10, oFontB, "Carrega o ultimo erro do erro.log")
+    THButton():New(002, 052, 'Todos'   , oPS, {|| Processa({|| oLstErro := LeErro(aLstErro, oLbxLista, @cMemoErro, .F., .F.), Eval(oLbxLista:bChange) }, "Carregando error.log", "Aguarde....", .T.)  }, 45, 10, oFontB, "Carrega os erros do error.log")
+    THButton():New(002, 102, 'Arquivo' , oPS, {|| Processa({|| oLstErro := LeErro(aLstErro, oLbxLista, @cMemoErro, .F., .T.), Eval(oLbxLista:bChange) }, "Carregando error.log", "Aguarde....", .T.)  }, 45, 10, oFontB, "Carrega os erros um arquivo informado")
 
 
     oPnlArea := TPanelCss():New(,,,oFolder)
@@ -4995,7 +5005,7 @@ Static Function LeErro(aLstErro, oLbxLista, cMemoErro, lUltimo, lGetFile)
 
     If lAbortPrint
         MsgAlert("Error incompleto, leitura do arquivo interrompida!")
-    EndIf 
+    EndIf
 
     aLstErro := aClone(oLstErro:aLstErro)
     oLbxLista:SetArray( aLstErro )
@@ -5218,11 +5228,11 @@ Method Load() Class TILstErro
         cLinha:=FT_FREADLN()
         IncProc("Linha: "+Alltrim(Str(__nL++)))
         ProcessMessage()
-        
-        
+
+
         If Valtype(lAbortPrint) == "l" .and. lAbortPrint
             Exit
-        EndiF 
+        EndiF
 
         If Empty(cLinha)
             FT_FSkip()
@@ -5347,7 +5357,7 @@ Return
 
 /*
 #####################################
-Erro 
+Erro
 #####################################
 */
 
@@ -5740,7 +5750,7 @@ Base64 Converter
 #################################################################################################################################
 */
 Static Function FolderB64(oDlg)
-    Local oP1 
+    Local oP1
     Local oP2
     Local oP3
 
@@ -5748,27 +5758,27 @@ Static Function FolderB64(oDlg)
     Local cMemo1 := ""
     Local oMemo2
     Local cMemo2 := ""
- 
+
     Local oFont  := TFont():New("Consolas",, 20,, .F.,,,,, .F. )
     Local oFontB := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
-    Local oOpB64 
+    Local oOpB64
     Local cOpB64 := "Encode Base64"
     Local oBut
     Local oMultiline
-    Local lMultiline := .T. 
+    Local lMultiline := .T.
 
     oP1:= TPanelCss():New(,,, oDlg)
     oP1:SetCoors(TRect():New(0, 0, 30, __nWidth))
     oP1:Align :=CONTROL_ALIGN_TOP
 
-        oBut  := THButton():New(002, 002,"Converte" ,oDlg,{|| ExecB64(cMemo1, @cMemo2, lMultiline, cOpB64) }, 45, 10, oFontB, "Converte a string") 
-        @ 002, 052 CHECKBOX oMultiline VAR lMultiline    PROMPT 'Linha-a-linha'	   SIZE 060,010 OF oP1 PIXEL font oFontB 
+        oBut  := THButton():New(002, 002,"Converte" ,oDlg,{|| ExecB64(cMemo1, @cMemo2, lMultiline, cOpB64) }, 45, 10, oFontB, "Converte a string")
+        @ 002, 052 CHECKBOX oMultiline VAR lMultiline    PROMPT 'Linha-a-linha'	   SIZE 060,010 OF oP1 PIXEL font oFontB
         @ 003, 122 MSCOMBOBOX oOpB64   VAR cOpB64  ITEMS {'Encode Base64', 'Decode Base64'}   SIZE 70,09 PIXEL OF oP1
-        
+
     oP2:= TPanelCss():New(,,, oDlg)
     oP2:SetCoors(TRect():New(0, 0, __nHeight * 0.4, __nWidth))
     oP2:Align :=CONTROL_ALIGN_TOP
-        
+
         oMemo1 := tMultiget():new(,, bSETGET(cMemo1), oP2)
         oMemo1:Align := CONTROL_ALIGN_ALLCLIENT
         oMemo1:oFont:=oFont
@@ -5781,7 +5791,7 @@ Static Function FolderB64(oDlg)
         oMemo2 := tMultiget():new(,, bSETGET(cMemo2), oP3)
         oMemo2:Align := CONTROL_ALIGN_ALLCLIENT
         oMemo2:oFont:=oFont
-        
+
 
 Return
 
@@ -5790,7 +5800,7 @@ Static Function ExecB64(cMemo1, cMemo2, lMultiline, cOpB64)
     Local aDataAux := {}
     Local aDataRet := {}
     Local nx  := 0
-    
+
     If lMultiline
         aDataAux := Strtokarr2( cMemo1, CRLF, .T.)
         For nx := 1 To Len(aDataAux)
@@ -5799,8 +5809,8 @@ Static Function ExecB64(cMemo1, cMemo2, lMultiline, cOpB64)
             Else
                 aAdd(aDataRet,Decode64( aDataAux[nx] ) )
             EndIf
-        Next 
- 
+        Next
+
         For nx := 1 To Len(aDataRet)
             cRetM += aDataRet[nx] + CRLF
         Next nForCpo
@@ -5812,10 +5822,10 @@ Static Function ExecB64(cMemo1, cMemo2, lMultiline, cOpB64)
         EndIf
 
     EndIf
-    
+
     cMemo2 := cRetM
-    
-Return 
+
+Return
 
 
 /*
@@ -5835,7 +5845,7 @@ Static Function FolderSX6(oFol)
     Local oFontB   := TFont():New('Consolas',, 16,, .T.,,,,, .F., .F.)
     Local aCab     := {'X2_ARQUIVO','X3_CAMPO','X3_TAMANHO','X3_DECIMAL','X3_GRPSXG','Existe Arq','Qtde Registros', "Analise", ""}
     Local aLista   := {{"", "", 0, 0, "", "", 0, "", "", 0 }}
-    Local oLbx    
+    Local oLbx
 
 
 
@@ -5855,7 +5865,7 @@ Static Function FolderSX6(oFol)
         @ 004, 182 SAY "Size Max:" of oPS SIZE 030, 09 PIXEL
         @ 003, 212 GET nSizeMax   of oPS  Pict  "999" SIZE 030, 08 PIXEL when .F.
 
-        oBut  := THButton():New(002, 260,"Corrigir SX3" ,oPS,{|| If(AlteraSX3(cGrupo, nSize, aSX3), PesqSX3(@cGrupo, oLbx, aLista, nSize), .t.) }, 45, 10, oFontB, "Corrige dicionario SX3") 
+        oBut  := THButton():New(002, 260,"Corrigir SX3" ,oPS,{|| If(AlteraSX3(cGrupo, nSize, aSX3), PesqSX3(@cGrupo, oLbx, aLista, nSize), .t.) }, 45, 10, oFontB, "Corrige dicionario SX3")
 
     oPI:= TPanelCss():New(,,,oFol)
     oPI:Align :=CONTROL_ALIGN_ALLCLIENT
@@ -5875,9 +5885,9 @@ Static Function VldGrupo(cGrupo, nSize, nSizeMin, nSizeMax)
 
     SXG->(DbSetOrder(1))
     If ! SXG->(DbSeek(cGrupo))
-        Alert("Grupo não cadastrado no SXG!")        
-        Return .F. 
-    EndIf 
+        Alert("Grupo não cadastrado no SXG!")
+        Return .F.
+    EndIf
     nSize     := SXG->XG_SIZE
     nSizeMin  := SXG->XG_SIZEMIN
     nSizeMax  := SXG->XG_SIZEMAX
@@ -5887,30 +5897,30 @@ Return .t.
 
 Static Function VldSize(cGrupo, nSize)
 
-    If Empty(cGrupo) 
-        Return .t. 
-    EndIf 
+    If Empty(cGrupo)
+        Return .t.
+    EndIf
 
     cGrupo := StrZero(Val(cGrupo), 3)
 
     SXG->(DbSetOrder(1))
     If ! SXG->(DbSeek(cGrupo))
-        Alert("Grupo não cadastrado no SXG!")        
-        Return .F. 
-    EndIf 
+        Alert("Grupo não cadastrado no SXG!")
+        Return .F.
+    EndIf
     If SXG->XG_SIZE <> nSize
         If ! MsgNoYes("Confirma o ajuste do size do grupo de " + Alltrim(Str(SXG->XG_SIZE)) + " para " + Alltrim(Str(nSize)) )
-            Return 
-        EndIf 
+            Return
+        EndIf
         SXG->(RecLock("SXG", .F.))
-        SXG->XG_SIZE := nSize 
+        SXG->XG_SIZE := nSize
         SXG->(MsUnLock())
         Return .t.
-    EndIf 
+    EndIf
 
 Return .f.
 
- 
+
 
 Static Function PesqSX3(cGrupo, oLbx, aLista, nSize)
     Private lAbortPrint := .F.
@@ -5925,16 +5935,16 @@ Static Function PesqSX3(cGrupo, oLbx, aLista, nSize)
     EndIf
 
     aLista := {}
-    
+
     Processa({|| aLista := CarregaSX3(cGrupo, nSize)},"Buscando campos relacionados ao grupo.","Aguarde", .T.)
 
     If lAbortPrint
         MsgAlert("Busca de campos interrompida!")
         aLista := {}
         cGrupo   := Space(3)
-    EndIf 
+    EndIf
 
-    If Empty(aLista) 
+    If Empty(aLista)
         aadd(aLista, {"", "", 0, 0, "", "", 0, "", "", 0 })
     EndIf
 
@@ -5959,7 +5969,7 @@ Static Function CarregaSX3(cGrupo, nSize)
 
     SX3->(DbGotop())
     While SX3->(! Eof() )
-        
+
         ProcessMessage()
         If lAbortPrint
             Exit
@@ -5988,7 +5998,7 @@ Static Function CarregaSX3(cGrupo, nSize)
                 (cAlias + "X")->(DbCloseArea())
             EndIf
             cExiste := "Sim"
-        Else 
+        Else
             cExiste := "Não"
         EndIf
 
@@ -6007,11 +6017,11 @@ Static Function AlteraSX3(cGrupo, nSize, aSX3)
 
     If ! MsgNoYes("Confirma a alteração do tamanho dos campos diferentes do size para tamanho " + Alltrim(Str(nSize)) + "?")
         Return lAtu
-    EndIf 
+    EndIf
 
     If MsgYesNo("Utiliza varias threads para os ajustes nas tabelas?")
         lVarias  := .T.
-    EndIf 
+    EndIf
 
     Processa({|| lAtu := ProcAltSX3(cGrupo, nSize, aSX3, lVarias) }, "Atualizando SX3","Atualizando",.F.)
 
@@ -6046,13 +6056,13 @@ Static Function ProcAltSX3(cGrupo, nSize, aSX3, lVarias)
                 cAliasSX := Left(cCampo, 3)
             Else
                 cAliasSX := "S" + Left(cCampo, 2)
-            EndIf 
+            EndIf
 
             If cExiste == "Sim"
                 If Select(cAliasSX) > 0
                     (cAliasSX)->(dbCloseArea())
                 EndIf
-                
+
                 If lVarias
                     cResult  += cAliasSX + CRLF
                     StartJob("u_TIDEVX31",GetEnvServer(), .f., SM0->M0_CODIGO, Alltrim(SM0->M0_CODFIL), cAliasSX)
@@ -6060,10 +6070,10 @@ Static Function ProcAltSX3(cGrupo, nSize, aSX3, lVarias)
                     IncProc("Sincronizando tabela " + cAliasSX)
                     cResult  += "Alterando tabela " + cAliasSX + CRLF
                     cResult  += StartJob("u_TIDEVX31",GetEnvServer(), .T., SM0->M0_CODIGO, Alltrim(SM0->M0_CODFIL), cAliasSX)
-                EndIf 
-            EndIf 
-        EndIf 
-    Next 
+                EndIf
+            EndIf
+        EndIf
+    Next
     RestArea(aAreaSX3)
     SX3->(DbGoto(nRec))
 
@@ -6073,14 +6083,14 @@ Static Function ProcAltSX3(cGrupo, nSize, aSX3, lVarias)
         AutoGrLog("Lista de alias que serão atualizadas por threads:")
         AutoGrLog(cResult)
         MostraErro()
-    EndIf 
+    EndIf
 
-Return lAtu 
+Return lAtu
 
 
 /*
 =================================================================================
-Funcoes genericas 
+Funcoes genericas
 =================================================================================
 */
 
@@ -6119,29 +6129,29 @@ Static Function LeHst(aHist, cTipo)
         FWJsonDeserialize(cConteudo, @aAux)
         If Valtype(aAux) == "A"
             aHist := aClone(aAux)
-        EndIf 
+        EndIf
     EndIf
-    
+
     If Empty(aHist) .and. cTipo == "cmd"
         aadd(aHist, "GetUserInfoArray()")
         aadd(aHist, "cProg:= 'TIDEV.PRW', Alert(VarInfo('Info',GetAPOInfo(cProg),,.F.))")
     EndIf
 
-Return 
+Return
 
 Static Function GrvHst(aHist, ctipo, cMemo)
     Local cFile     := GetTempPath() + "tidev_" + cTipo + ".json"
-    Local cConteudo := "" 
+    Local cConteudo := ""
     Local nPos      := 0
     Local nLimite   := 10
-    
+
     If Empty(cMemo)
         aHist := {}
     Else
         If Len(aHist) == nLimite
             aDel(aHist, 1)
             aHist[Len(aHist)] := cMemo
-        Else 
+        Else
 
             nPos := aScan(aHist, {|x| x == cMemo})
             If Empty(nPos)
@@ -6150,13 +6160,13 @@ Static Function GrvHst(aHist, ctipo, cMemo)
                 aDel(aHist,nPos)
                 aHist[len(aHist)] := cMemo
             EndIf
-        EndIf 
+        EndIf
     EndIf
 
     cConteudo := FwJsonSerialize(aHist)
     MemoWrit(cFile, cConteudo )
 
-Return 
+Return
 
 Static Function GrvArq(cArquivo,cLinha)
     If ! File(cArquivo)
