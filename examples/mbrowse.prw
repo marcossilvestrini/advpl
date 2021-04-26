@@ -4,8 +4,8 @@
 #DEFINE CRLF Chr(13)+Chr(10)
 
 //------------------------------------------------------------------------------------
-/*{Protheus.doc}mbrowser
-Examples Function MBrowser
+/*{Protheus.doc}mbrowse
+Examples Function MBrowse
 
 @author Marcos Silvestrini
 @version P12
@@ -16,7 +16,7 @@ Examples Function MBrowser
 //------------------------------------Execution----------------------------------------
 User Function MBRW00()
     Local cAlias:="SB1"
-    Private cCadastro:="Product Registration"
+    Private cCadastro:="Cadastro MBrowse"
     Private aRotina:={}
 
     // AAdd(aDest,xExpr)
