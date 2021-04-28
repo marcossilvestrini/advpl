@@ -14,7 +14,7 @@ Examples Function MBrowse
 //-------------------------------------------------------------------------------------
 
 //------------------------------------Execution----------------------------------------
-User Function MBRW00()
+User Function MBRW000()
     Local cAlias:="SB1"
     Private cCadastro:="Cadastro MBrowse"
     Private aRotina:={}
