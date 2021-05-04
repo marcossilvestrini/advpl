@@ -3,6 +3,8 @@
 #DEFINE CRLF Chr(13)+Chr(10)
 
 
+
+
 //------------------------------------------------------------------------------------
 /*{Protheus.doc}arrays
 Arrays in ADVPL - https://tdn.totvs.com/display/tec/Array
