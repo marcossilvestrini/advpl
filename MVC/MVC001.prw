@@ -17,9 +17,13 @@ Examples MVC
 //------------------------------------ User Functions----------------------------------
 
 User Function MVC001()
-
     Local oBrowse:=FwMBrowse():New()
+    oBrowse:SetAlias("ZZB")
+    oBrowse:SetDescription("Albuns")
 
-    oBrowse
+    //Subtitles
+    oBrowse:AddLegend("ZZB->ZZB_TIPO == '1'","GREEN","CD")
+    oBrowse:AddLegend("ZZB->ZZB_TIPO == '2'","BLUE","DVD")
 
+    oBrowse:Activate()
 return
