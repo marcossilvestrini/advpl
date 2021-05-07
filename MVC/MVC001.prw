@@ -41,19 +41,60 @@ return aRotina
 // ModelDef
 Static Function ModelDef()
     local oModel:= nil
-
-    // FWFormStruct(nType,cAliasSX2,/*bSX3*/)
-    // nType: 1-Model | 2-View
     Local oStZZB:= FWFormStruct(1,"ZZB")
 
-    oModel:=  MPFormModel():New("ZMODELM",,,,)
+    // Instanciando o modelo de dados
+    // FWFormStruct(nType,cAliasSX2,/*bSX3*/) - nType: 1-Model | 2-View
+    oModel:=  MPFormModel():New("ZMODELLM",,,,)
 
-return
+    // Atribuindo formulario para o modelo de dados
+    oModel:AddFields("FORMZZB",oStZZB)
+
+    // Chave primaria da rotina
+    oModel:SetPrimaryKey('ZZB_FILIAL','ZZB_COD')
+
+    // Adicionando Descrição ao Modelo
+    oModel:SetDescription("Modelo de Dados ZZB")
+
+    // Adicionando Descrição ao Formulario do Modelo
+    oModel:GetModel("FORMZZB"):SetDescription("Formulario de Cadastros")
+
+return oModel
 
 // ViewDef
 Static Function ViewDef()
+    // Monta o array com a estrutura da tabela
+    Local aStruZZB:=ZZB->(DBStruct())
 
-return
+    // Carrega ModelDef do fonte passado por parametro
+    Local oModel:= FWLoadModel("MVC001")
+
+    // Define a estrutura do modelo
+    Local oStZZB:= FWFormStruct(2,"ZZB")
+
+    // Objeto View
+    Local oView:= Nill
+
+    // Set objeto View
+    oView:= FWFormView():New()
+    oView:SetModel(oModel)
+
+    // Atribuindo formulario para o modelo de dados
+    oView:AddFields("VIEW_ZZB",oStZZB,"FORMZZB")//Id field ModelDef
+
+    // Criando conteiner
+    oView:CreateHorizontalBox("TELA",100)
+
+    // Definindo titulo
+    oView:EnableTitleView("VIEW_ZZB","Dados da View")
+
+    // Fechando tela na ação ok
+    oView:SetCloseOnOK({||.T.})
+
+    // Definindo Owner da View - Id da View
+    oView:SetOwnerView("VIEW_ZZB","TELA")
+
+return oView
 
 
 //------------------------------------ User Functions----------------------------------

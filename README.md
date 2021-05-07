@@ -79,6 +79,17 @@ SIX
 
 Executar programa pelo SIGAGFE em:  Miscelanea -> Executar Programas(Ambiente 78)
 
+## MVC
+
+### OPTIONS
+
+1 - Pesquisar
+2 - Visualizar
+3 - Incluir
+4 - Alterar
+5 - Excluir
+7 - Copiar
+
 ## Backup Tables in PostgreSQL with pg_dump
 
 `C:\Program Files\pgAdmin 4\v5\runtime\pg_dump.exe --file "F:\\Projetos\\udemy\\curso-advlp-para-leigos\\tables\\zzb_bkp" --host "192.168.0.133" --port "5432" --username "protheus" --no-password --verbose --format=c --blobs --table "public.zzb990" "protheus"`
