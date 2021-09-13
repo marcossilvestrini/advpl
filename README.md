@@ -21,11 +21,11 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 ## References
 
-[TDS VSCode](https://github.com/totvs/tds-vscode)
-[TDS: Compilação](https://github.com/totvs/tds-vscode/blob/master/docs/compilation.md)
-[Fontes Curso ADVPL para Leigos](https://drive.google.com/drive/u/0/folders/0B2bXz0zOen_gVHpEUGQtMXczclU)
-[Lista de Tabelas](https://terminaldeinformacao.com/wp-content/tabelas/sa1.php)
-0[Limite Tamanho de Nomes de Funções](https://tdn.totvs.com/pages/viewpage.action?pageId=172296510)
+[TDS VSCode](https://github.com/totvs/tds-vscode)\
+[TDS: Compilação](https://github.com/totvs/tds-vscode/blob/master/docs/compilation.md)\
+[Fontes Curso ADVPL para Leigos](https://drive.google.com/drive/u/0/folders/0B2bXz0zOen_gVHpEUGQtMXczclU)\
+[Lista de Tabelas](https://terminaldeinformacao.com/wp-content/tabelas/sa1.php)\
+[Limite Tamanho de Nomes de Funções](https://tdn.totvs.com/pages/viewpage.action?pageId=172296510)\
 [Estruturas de Repetição](https://tdn.totvs.com/pages/viewpage.action?pageId=6063082)
 
 ## Lista de Tabelas SX
@@ -70,9 +70,9 @@ GETSXENUM("ZZB","ZZB_COD")
 
 ## Backup de Dicionario no Banco
 
-SX2
-SX3
-SXB
+SX2\
+SX3\
+SXB\
 SIX
 
 ## Como Executar Programas Customizados(Antigo Formulas)
@@ -83,11 +83,11 @@ Executar programa pelo SIGAGFE em:  Miscelanea -> Executar Programas(Ambiente 78
 
 ### OPTIONS
 
-1 - Pesquisar
-2 - Visualizar
-3 - Incluir
-4 - Alterar
-5 - Excluir
+1 - Pesquisar\
+2 - Visualizar\
+3 - Incluir\
+4 - Alterar\
+5 - Excluir\
 7 - Copiar
 
 ## Backup Tables in PostgreSQL with pg_dump
